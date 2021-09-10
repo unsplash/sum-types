@@ -1,0 +1,47 @@
+{
+  "private": true,
+  "name": "sum-types-ts",
+  "description": "TODO",
+  "version": "0.1.0",
+  "license": "MIT",
+  "author": "Unsplash",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unsplash/sum-types-ts"
+  },
+  "homepage": "https://github.com/unsplash/sum-types-ts",
+  "bugs": "https://github.com/unsplash/sum-types-ts/issues",
+  "keywords": [
+    "functional-programming",
+    "typescript",
+    "adt",
+    "tagged",
+    "pattern",
+    "matching"
+  ],
+  "main": "./index.js",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p ./tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ./src/ ./test/ --ext ts",
+    "fmt": "prettier .",
+    "test": "jest",
+    "docs": "docs-ts",
+    "prepub": "rm -rf dist && mkdir -p dist && cp ./README.md ./dist/ && cat ./package.json | grep -v '\"private\":' > ./dist/package.json && yarn run build"
+  },
+  "devDependencies": {
+    "@types/eslint": "^7.0.0",
+    "@types/jest": "^26.0.20",
+    "@typescript-eslint/eslint-plugin": "^4.3.0",
+    "@typescript-eslint/parser": "^4.3.0",
+    "docs-ts": "^0.6.7",
+    "eslint": "^7.0.0",
+    "eslint-plugin-functional": "^3.5.0",
+    "fast-check": "^2.5.0",
+    "jest": "^26.6.0",
+    "prettier": "^2.1.2",
+    "ts-jest": "^26.4.1",
+    "typescript": "^4.0.3"
+  }
+}
