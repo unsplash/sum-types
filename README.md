@@ -1,6 +1,6 @@
 # sum-types-ts
 
-TODO
+Safe, ergonomic, non-generic sum types in TypeScript.
 
 Documentation: [unsplash.github.io/sum-types-ts](https://unsplash.github.io/sum-types-ts/)
 
