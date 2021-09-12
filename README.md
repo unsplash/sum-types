@@ -7,17 +7,18 @@ Documentation: [unsplash.github.io/sum-types-ts](https://unsplash.github.io/sum-
 Example:
 
 ```ts
-import { Member, create } from 'sum-types-ts'
+import { Member, create } from "sum-types-ts"
 
-type Weather
-  = Member<'Sun'>
-  | Member<'Rain', number>
+type Weather = Member<"Sun"> | Member<"Rain", number>
 
-const { mk: { Sun, Rain }, match } = create<Weather>()
+const {
+  mk: { Sun, Rain },
+  match,
+} = create<Weather>()
 
 const getRainfall = match({
   Rain: n => `${n}mm`,
-  Sun: () => 'none',
+  Sun: () => "none",
 })
 
 const todayWeather = Rain(5)
