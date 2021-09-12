@@ -38,7 +38,7 @@ The library solves a number of problems we've experienced at Unsplash with alter
 
 - Convenient member constructor functions are provided, unlike [ts-adt](https://github.com/pfgray/ts-adt).
 - The API is small, simple, and boilerplate-free, unlike [tagged-ts](https://github.com/joshburgess/tagged-ts).
-- Pattern matching is safe, unlike [@practical-fp/union-types](https://github.com/practical-fp/union-types).
+- Pattern matching is both curried and safe at arbitrary depths, unlike [@practical-fp/union-types](https://github.com/practical-fp/union-types).
 - Types are not inlined in compiler output, improving readability and performance at scale, unlike [unionize](https://github.com/pelotom/unionize).
 
 The compromise we've made to achieve this is to not support generic sum types, as in our testing we've found that they introduce unsafety into pattern matching and complicate the API. We deem this acceptable as, in our experience, in an ecosystem which already contains the likes of [fp-ts](https://github.com/gcanti/fp-ts) and [remote-data-ts](https://github.com/devexperts/remote-data-ts), non-generic sum types are good enough for almost all domain types written in real-world application code.
