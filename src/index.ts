@@ -64,31 +64,12 @@ type Tags<A extends AnyMember> = A[TagKey]
 type Values<A extends AnyMember> = A[ValueKey]
 
 /**
- * Narrow a sum type to a subset of its members based upon the provided tag(s).
- * Typically used to narrow a sum type down to a single member.
- *
- * @example
- * type Sum
- *   = Member<"1", 1>
- *   | Member<"2", 2>
- *   | Member<"3", 3>
- *
- * // Equals: Member<"1", 1> | Member<"3", 3>
- * Narrow<Sum, "1" | "3">
- */
-type Narrow<A extends AnyMember, K extends Tags<A>> = Extract<
-  A,
-  Member<K, unknown>
->
-
-/**
  * A type-level representation of the overloaded `mkConstructor` function.
  */
 type Constructor<
   A extends AnyMember,
-  K extends string,
-  B = Values<Narrow<A, K>>,
-> = B extends undefined ? () => A : (x: B) => A
+  Value,
+> = Value extends undefined ? () => A : (x: Value) => A
 
 /**
  * Create a constructor. Overloaded so that members without data don't have to
@@ -101,7 +82,7 @@ function mkConstructor(k: string) {
 }
 
 type Constructors<A extends AnyMember> = {
-  readonly [K in Tags<A>]: Constructor<A, K>
+  readonly [V in A as Tags<V>]: Constructor<A, Values<V>>;
 }
 
 // eslint-disable-next-line functional/functional-parameters
@@ -141,7 +122,7 @@ export const _ = Symbol("@unsplash/sum-types pattern matching wildcard")
  * Ensures that a {@link match} expression covers all cases.
  */
 type CasesExhaustive<A extends AnyMember, B> = {
-  readonly [K in Tags<A>]: (x: Values<Narrow<A, K>>) => B
+  readonly [V in A as Tags<V>]: (val: Values<V>) => B;
 }
 
 /**
@@ -166,6 +147,7 @@ const mkMatch =
   (x: A): B => {
     const g = fs[x[tagKey] as keyof typeof fs]
     // eslint-disable-next-line functional/no-conditional-statement
+    // TODO: why do we have an error here now? TS bug?
     if (g) return g(x[valueKey])
 
     const h = (fs as CasesWildcard<A, B>)[_]
