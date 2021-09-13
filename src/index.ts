@@ -60,8 +60,8 @@ export interface Member<K extends string = string, A = undefined> {
 
 type AnyMember = Member<string, unknown>
 
-type Tags<A extends AnyMember> = A[TagKey]
-type Values<A extends AnyMember> = A[ValueKey]
+type Tag<A extends AnyMember> = A[TagKey]
+type Value<A extends AnyMember> = A[ValueKey]
 
 /**
  * A type-level representation of the overloaded `mkConstructor` function.
@@ -82,13 +82,13 @@ function mkConstructor(k: string) {
 }
 
 type Constructors<A extends AnyMember> = {
-  readonly [V in A as Tags<V>]: Constructor<A, Values<V>>;
+  readonly [V in A as Tag<V>]: Constructor<A, Value<V>>;
 }
 
 // eslint-disable-next-line functional/functional-parameters
 const mkConstructors = <A extends AnyMember>(): Constructors<A> =>
   new Proxy({} as Constructors<A>, {
-    get: (__: Constructors<A>, tag: Tags<A>) => mkConstructor(tag),
+    get: (__: Constructors<A>, tag: Tag<A>) => mkConstructor(tag),
   })
 
 /**
@@ -122,7 +122,7 @@ export const _ = Symbol("@unsplash/sum-types pattern matching wildcard")
  * Ensures that a {@link match} expression covers all cases.
  */
 type CasesExhaustive<A extends AnyMember, B> = {
-  readonly [V in A as Tags<V>]: (val: Values<V>) => B;
+  readonly [V in A as Tag<V>]: (val: Value<V>) => B;
 }
 
 /**
@@ -208,7 +208,7 @@ export const create = <A extends AnyMember>(): Sum<A> => ({
  * A serialized representation of our sum type, isomorphic to the sum type
  * itself. The conditional type distributes over the union members.
  */
-type Serialized<A> = A extends AnyMember ? readonly [Tags<A>, Values<A>] : never
+type Serialized<A> = A extends AnyMember ? readonly [Tag<A>, Value<A>] : never
 
 /**
  * Serialize any sum type member into a tuple of its discriminant tag and its
