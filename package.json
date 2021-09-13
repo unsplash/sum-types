@@ -1,16 +1,16 @@
 {
   "private": true,
-  "name": "sum-types-ts",
+  "name": "@unsplash/sum-types",
   "description": "Safe, ergonomic, non-generic sum types in TypeScript.",
   "version": "0.1.0",
   "license": "MIT",
   "author": "Unsplash",
   "repository": {
     "type": "git",
-    "url": "https://github.com/unsplash/sum-types-ts"
+    "url": "https://github.com/unsplash/sum-types"
   },
-  "homepage": "https://github.com/unsplash/sum-types-ts",
-  "bugs": "https://github.com/unsplash/sum-types-ts/issues",
+  "homepage": "https://github.com/unsplash/sum-types",
+  "bugs": "https://github.com/unsplash/sum-types/issues",
   "keywords": [
     "functional-programming",
     "typescript",

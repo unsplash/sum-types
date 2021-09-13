@@ -1,13 +1,13 @@
-# sum-types-ts
+# @unsplash/sum-types
 
 Safe, ergonomic, non-generic sum types in TypeScript.
 
-Documentation: [unsplash.github.io/sum-types-ts](https://unsplash.github.io/sum-types-ts/)
+Documentation: [unsplash.github.io/sum-types](https://unsplash.github.io/sum-types/)
 
 Example:
 
 ```ts
-import { Member, create } from "sum-types-ts"
+import { Member, create } from "@unsplash/sum-types"
 
 type Weather = Member<"Sun"> | Member<"Rain", number>
 
@@ -28,7 +28,7 @@ getRainfall(todayWeather) // '5mm'
 
 ## Installation
 
-The library is available on the npm registry under the same package name: [sum-types-ts](https://www.npmjs.com/package/sum-types-ts)
+The library is available on the npm registry: [@unsplash/sum-types](https://www.npmjs.com/package/@unsplash/sum-types)
 
 Note that due to usage of `Proxy` and `Symbol` this library only supports ES2015+.
 

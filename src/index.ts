@@ -2,7 +2,7 @@
  * The library's only entrypoint. Get started with `Member` and `create`.
  *
  * @example
- * import { Member, create } from 'sum-types-ts'
+ * import { Member, create } from '@unsplash/sum-types'
  *
  * type Weather
  *   = Member<'Sun'>
@@ -29,14 +29,14 @@
  * Symbol used to index a sum type and access its tag. Not exposed with the
  * intention that consumers make use of (de)serialization.
  */
-const tagKey = Symbol("sum-types-ts internal tag key")
+const tagKey = Symbol("@unsplash/sum-types internal tag key")
 type TagKey = typeof tagKey
 
 /**
  * Symbol used to index a sum type and access its tag. Not exposed with the
  * intention that consumers make use of (de)serialization.
  */
-const valueKey = Symbol("sum-types-ts internal value key")
+const valueKey = Symbol("@unsplash/sum-types internal value key")
 type ValueKey = typeof valueKey
 
 /**
@@ -45,7 +45,7 @@ type ValueKey = typeof valueKey
  * members.
  *
  * @example
- * import { Member } from 'sum-types-ts'
+ * import { Member } from '@unsplash/sum-types'
  *
  * type Weather
  *   = Member<"Sun">
@@ -114,7 +114,7 @@ const mkConstructors = <A extends AnyMember>(): Constructors<A> =>
  * Symbol for declaring a wildcard case in a {@link match} expression.
  *
  * @example
- * import { Member, create, _ } from 'sum-types-ts'
+ * import { Member, create, _ } from '@unsplash/sum-types'
  *
  * type Weather
  *   = Member<'Sun'>
@@ -135,7 +135,7 @@ const mkConstructors = <A extends AnyMember>(): Constructors<A> =>
  *
  * @since 0.1.0
  */
-export const _ = Symbol("sum-types-ts pattern matching wildcard")
+export const _ = Symbol("@unsplash/sum-types pattern matching wildcard")
 
 /**
  * Ensures that a {@link match} expression covers all cases.
@@ -203,7 +203,7 @@ interface Sum<A extends AnyMember> {
  * sum type.
  *
  * @example
- * import { Member, create } from 'sum-types-ts'
+ * import { Member, create } from '@unsplash/sum-types'
  *
  * type Weather
  *   = Member<'Sun'>

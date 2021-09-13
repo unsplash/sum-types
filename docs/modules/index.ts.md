@@ -11,7 +11,7 @@ The library's only entrypoint. Get started with `Member` and `create`.
 **Example**
 
 ```ts
-import { Member, create } from 'sum-types-ts'
+import { Member, create } from '@unsplash/sum-types'
 
 type Weather = Member<'Sun'> | Member<'Rain', number>
 
@@ -65,7 +65,7 @@ export interface Member<K extends string = string, A = undefined> {
 **Example**
 
 ```ts
-import { Member } from 'sum-types-ts'
+import { Member } from '@unsplash/sum-types'
 
 type Weather = Member<'Sun'> | Member<'Rain', number>
 ```
@@ -85,7 +85,7 @@ export declare const _: typeof _
 **Example**
 
 ```ts
-import { Member, create, _ } from 'sum-types-ts'
+import { Member, create, _ } from '@unsplash/sum-types'
 
 type Weather = Member<'Sun'> | Member<'Rain', number> | Member<'Clouds'> | Member<'Overcast', string>
 
@@ -117,7 +117,7 @@ export declare const create: <A extends AnyMember>() => Sum<A>
 **Example**
 
 ```ts
-import { Member, create } from 'sum-types-ts'
+import { Member, create } from '@unsplash/sum-types'
 
 type Weather = Member<'Sun'> | Member<'Rain', number>
 
