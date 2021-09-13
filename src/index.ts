@@ -158,9 +158,22 @@ type CasesWildcard<A extends AnyMember, B> = Partial<CasesExhaustive<A, B>> & {
  */
 type Cases<A extends AnyMember, B> = CasesExhaustive<A, B> | CasesWildcard<A, B>
 
-type Match<A extends AnyMember> = <B>(fs: Cases<A, B>) => (x: A) => B
+export const match =
+  <A extends AnyMember, B>(fs: Cases<A, B>) =>
+  (x: A): B => {
+    const g = fs[x[tagKey] as keyof typeof fs]
+    // eslint-disable-next-line functional/no-conditional-statement
+    if (g) return g(x[valueKey])
 
-const mkMatch =
+    const h = (fs as CasesWildcard<A, B>)[_]
+    // eslint-disable-next-line functional/no-conditional-statement
+    if (h) return h()
+
+    // eslint-disable-next-line functional/no-throw-statement
+    throw new Error(`Failed to pattern match against tag "${x[tagKey]}".`)
+  }
+
+export const matchOn =
   <A extends AnyMember>() => // eslint-disable-line functional/functional-parameters
   <B>(fs: Cases<A, B>) =>
   (x: A): B => {
@@ -183,19 +196,6 @@ interface Sum<A extends AnyMember> {
    * @since 0.1.0
    */
   readonly mk: Constructors<A>
-  /**
-   * Pattern match against each member of a sum type. All members must
-   * exhaustively be covered unless a wildcard (@link \_) is present.
-   *
-   * @example
-   * match({
-   *   Rain: (n) => `It's rained ${n} today!`,
-   *   [_]: () => 'Nice weather today.',
-   * })
-   *
-   * @since 0.1.0
-   */
-  readonly match: Match<A>
 }
 
 /**
@@ -219,7 +219,6 @@ interface Sum<A extends AnyMember> {
 // eslint-disable-next-line functional/functional-parameters
 export const create = <A extends AnyMember>(): Sum<A> => ({
   mk: mkConstructors<A>(),
-  match: mkMatch<A>(),
 })
 
 /**

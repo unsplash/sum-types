@@ -1,6 +1,6 @@
 /* eslint-disable functional/functional-parameters */
 
-import { create, _, serialize, deserialize, Member } from "../src/index"
+import { create, _, serialize, deserialize, Member, match, matchOn } from "../src/index"
 import fc from "fast-check"
 
 describe("index", () => {
@@ -11,7 +11,7 @@ describe("index", () => {
         | Member<"Sun">
         | Member<"Overcast", string>
       const Weather = create<Weather>()
-      const f = Weather.match({
+      const f = matchOn<Weather>()({
         Rain: n => `${n}mm`,
         [_]: () => "not rain",
       })
@@ -38,4 +38,26 @@ describe("index", () => {
       )
     })
   })
+})
+
+// testing polymorphic match
+/* eslint-disable */
+type A = Member<'A1'> | Member<'A2', B>
+type B = Member<'B1'> | Member<'B2', C>
+type C = Member<'C1'> | Member<'C2', string>
+
+const x = () => 123
+
+// Expect: A -> number
+const f = matchOn<A>()({
+  A1: x,
+  A2: match({
+    B1: x,
+    B2: match({
+      C1: x,
+      C2: x,
+      // Expect excess property error
+      pls: x,
+    }),
+  }),
 })
