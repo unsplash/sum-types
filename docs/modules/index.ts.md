@@ -6,21 +6,19 @@ parent: Modules
 
 ## index overview
 
-The library's only entrypoint. Get started with `Member` and `create`.
+The library's only entrypoint. Get started with `Member`, `create`, and
+`matchOn`.
 
 **Example**
 
 ```ts
-import { Member, create } from '@unsplash/sum-types'
+import { Member, create, matchOn } from '@unsplash/sum-types'
 
 type Weather = Member<'Sun'> | Member<'Rain', number>
 
-const {
-  mk: { Sun, Rain },
-  match,
-} = create<Weather>()
+const { Rain } = create<Weather>()
 
-const getRainfall = match({
+const getRainfall = matchOn<Weather>()({
   Rain: (n) => `${n}mm`,
   Sun: () => 'none',
 })
@@ -41,6 +39,8 @@ Added in v0.1.0
   - [\_](#_)
   - [create](#create)
   - [deserialize](#deserialize)
+  - [match](#match)
+  - [matchOn](#matchon)
   - [serialize](#serialize)
 
 ---
@@ -85,33 +85,32 @@ export declare const _: typeof _
 **Example**
 
 ```ts
-import { Member, create, _ } from '@unsplash/sum-types'
+import { Member, create, matchOn, _ } from '@unsplash/sum-types'
 
 type Weather = Member<'Sun'> | Member<'Rain', number> | Member<'Clouds'> | Member<'Overcast', string>
 
-const Weather = create<Weather>()
+const { Sun, Clouds } = create<Weather>()
 
-const getSun = Weather.match({
+const getSun = matchOn<Weather>()({
   Sun: () => 'sun',
   Overcast: () => 'partial sun',
   [_]: () => 'no sun',
 })
 
-assert.strictEqual(getSun(Weather.mk.Sun()), 'sun')
-assert.strictEqual(getSun(Weather.mk.Clouds()), 'no sun')
+assert.strictEqual(getSun(Sun()), 'sun')
+assert.strictEqual(getSun(Clouds()), 'no sun')
 ```
 
 Added in v0.1.0
 
 ## create
 
-Create runtime constructors and a pattern matching function for a given
-sum type.
+Create runtime constructors for a given sum type.
 
 **Signature**
 
 ```ts
-export declare const create: <A extends AnyMember>() => Sum<A>
+export declare const create: <A extends AnyMember>() => Constructors<A>
 ```
 
 **Example**
@@ -123,10 +122,7 @@ type Weather = Member<'Sun'> | Member<'Rain', number>
 
 // Depending upon your preferences you may prefer to destructure the
 // returned object or effectively namespace it:
-const {
-  mk: { Sun, Rain },
-  match,
-} = create<Weather>()
+const { Sun, Rain } = create<Weather>()
 const Weather = create<Weather>()
 ```
 
@@ -142,6 +138,72 @@ structure. Reversible by `serialize`.
 
 ```ts
 export declare const deserialize: <A extends AnyMember>() => (x: Serialized<A>) => A
+```
+
+Added in v0.1.0
+
+## match
+
+Pattern match against each member of a sum type. All members must
+exhaustively be covered unless a wildcard (@link \_) is present.
+
+**Signature**
+
+```ts
+export declare const match: <A extends AnyMember, B>(fs: Cases<A, B>) => (x: A) => B
+```
+
+**Example**
+
+```ts
+import { Member, create, match, _ } from '@unsplash/sum-types'
+
+type Weather = Member<'Sun'> | Member<'Rain', number> | Member<'Clouds'> | Member<'Overcast', string>
+
+const { Sun, Rain } = create<Weather>()
+
+const getRainMsg: (x: Weather) => string = match({
+  Rain: (n) => `It's rained ${n}mm today!`,
+  [_]: () => 'Nice weather today.',
+})
+
+assert.strictEqual(getRainMsg(Rain(5)), "It's rained 5mm today!")
+assert.strictEqual(getRainMsg(Sun()), 'Nice weather today.')
+```
+
+Added in v0.1.0
+
+## matchOn
+
+Pattern match against each member of a sum type. All members must
+exhaustively be covered unless a wildcard (@link \_) is present.
+
+The same as (@link match), except the type argument representing the sum type
+is thunked for use in circumstances in which TypeScript cannot infer its
+type.
+
+**Signature**
+
+```ts
+export declare const matchOn: <A extends AnyMember>() => <B>(fs: Cases<A, B>) => (x: A) => B
+```
+
+**Example**
+
+```ts
+import { Member, create, matchOn, _ } from '@unsplash/sum-types'
+
+type Weather = Member<'Sun'> | Member<'Rain', number> | Member<'Clouds'> | Member<'Overcast', string>
+
+const { Sun, Rain } = create<Weather>()
+
+const getRainMsg = matchOn<Weather>()({
+  Rain: (n) => `It's rained ${n}mm today!`,
+  [_]: () => 'Nice weather today.',
+})
+
+assert.strictEqual(getRainMsg(Rain(5)), "It's rained 5mm today!")
+assert.strictEqual(getRainMsg(Sun()), 'Nice weather today.')
 ```
 
 Added in v0.1.0

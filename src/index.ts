@@ -1,16 +1,17 @@
 /**
- * The library's only entrypoint. Get started with `Member` and `create`.
+ * The library's only entrypoint. Get started with `Member`, `create`, and
+ * `matchOn`.
  *
  * @example
- * import { Member, create } from '@unsplash/sum-types'
+ * import { Member, create, matchOn } from '@unsplash/sum-types'
  *
  * type Weather
  *   = Member<'Sun'>
  *   | Member<'Rain', number>
  *
- * const { mk: { Sun, Rain }, match } = create<Weather>()
+ * const { Rain } = create<Weather>()
  *
- * const getRainfall = match({
+ * const getRainfall = matchOn<Weather>()({
  *   Rain: n => `${n}mm`,
  *   Sun: () => 'none',
  * })
@@ -104,17 +105,11 @@ type Constructors<A extends AnyMember> = {
   readonly [K in Tags<A>]: Constructor<A, K>
 }
 
-// eslint-disable-next-line functional/functional-parameters
-const mkConstructors = <A extends AnyMember>(): Constructors<A> =>
-  new Proxy({} as Constructors<A>, {
-    get: (__: Constructors<A>, tag: Tags<A>) => mkConstructor(tag),
-  })
-
 /**
  * Symbol for declaring a wildcard case in a {@link match} expression.
  *
  * @example
- * import { Member, create, _ } from '@unsplash/sum-types'
+ * import { Member, create, matchOn, _ } from '@unsplash/sum-types'
  *
  * type Weather
  *   = Member<'Sun'>
@@ -122,16 +117,16 @@ const mkConstructors = <A extends AnyMember>(): Constructors<A> =>
  *   | Member<'Clouds'>
  *   | Member<'Overcast', string>
  *
- * const Weather = create<Weather>()
+ * const { Sun, Clouds } = create<Weather>()
  *
- * const getSun = Weather.match({
+ * const getSun = matchOn<Weather>()({
  *   Sun: () => 'sun',
  *   Overcast: () => 'partial sun',
  *   [_]: () => 'no sun',
  * })
  *
- * assert.strictEqual(getSun(Weather.mk.Sun()), 'sun')
- * assert.strictEqual(getSun(Weather.mk.Clouds()), 'no sun')
+ * assert.strictEqual(getSun(Sun()), 'sun')
+ * assert.strictEqual(getSun(Clouds()), 'no sun')
  *
  * @since 0.1.0
  */
@@ -158,6 +153,31 @@ type CasesWildcard<A extends AnyMember, B> = Partial<CasesExhaustive<A, B>> & {
  */
 type Cases<A extends AnyMember, B> = CasesExhaustive<A, B> | CasesWildcard<A, B>
 
+/**
+ * Pattern match against each member of a sum type. All members must
+ * exhaustively be covered unless a wildcard (@link \_) is present.
+ *
+ * @example
+ * import { Member, create, match, _ } from '@unsplash/sum-types'
+ *
+ * type Weather
+ *   = Member<'Sun'>
+ *   | Member<'Rain', number>
+ *   | Member<'Clouds'>
+ *   | Member<'Overcast', string>
+ *
+ * const { Sun, Rain } = create<Weather>()
+ *
+ * const getRainMsg: (x: Weather) => string = match({
+ *   Rain: (n) => `It's rained ${n}mm today!`,
+ *   [_]: () => 'Nice weather today.',
+ * })
+ *
+ * assert.strictEqual(getRainMsg(Rain(5)), 'It\'s rained 5mm today!')
+ * assert.strictEqual(getRainMsg(Sun()), 'Nice weather today.')
+ *
+ * @since 0.1.0
+ */
 export const match =
   <A extends AnyMember, B>(fs: Cases<A, B>) =>
   (x: A): B => {
@@ -173,34 +193,41 @@ export const match =
     throw new Error(`Failed to pattern match against tag "${x[tagKey]}".`)
   }
 
-export const matchOn =
-  <A extends AnyMember>() => // eslint-disable-line functional/functional-parameters
-  <B>(fs: Cases<A, B>) =>
-  (x: A): B => {
-    const g = fs[x[tagKey] as keyof typeof fs]
-    // eslint-disable-next-line functional/no-conditional-statement
-    if (g) return g(x[valueKey])
-
-    const h = (fs as CasesWildcard<A, B>)[_]
-    // eslint-disable-next-line functional/no-conditional-statement
-    if (h) return h()
-
-    // eslint-disable-next-line functional/no-throw-statement
-    throw new Error(`Failed to pattern match against tag "${x[tagKey]}".`)
-  }
-
-interface Sum<A extends AnyMember> {
-  /**
-   * An object of constructors for the sum type's members.
-   *
-   * @since 0.1.0
-   */
-  readonly mk: Constructors<A>
-}
+/**
+ * Pattern match against each member of a sum type. All members must
+ * exhaustively be covered unless a wildcard (@link \_) is present.
+ *
+ * The same as (@link match), except the type argument representing the sum type
+ * is thunked for use in circumstances in which TypeScript cannot infer its
+ * type.
+ *
+ * @example
+ * import { Member, create, matchOn, _ } from '@unsplash/sum-types'
+ *
+ * type Weather
+ *   = Member<'Sun'>
+ *   | Member<'Rain', number>
+ *   | Member<'Clouds'>
+ *   | Member<'Overcast', string>
+ *
+ * const { Sun, Rain } = create<Weather>()
+ *
+ * const getRainMsg = matchOn<Weather>()({
+ *   Rain: (n) => `It's rained ${n}mm today!`,
+ *   [_]: () => 'Nice weather today.',
+ * })
+ *
+ * assert.strictEqual(getRainMsg(Rain(5)), 'It\'s rained 5mm today!')
+ * assert.strictEqual(getRainMsg(Sun()), 'Nice weather today.')
+ *
+ * @since 0.1.0
+ */
+export const matchOn: <A extends AnyMember>() => <B>(
+  fs: Cases<A, B>,
+) => (x: A) => B = () => match // eslint-disable-line functional/functional-parameters
 
 /**
- * Create runtime constructors and a pattern matching function for a given
- * sum type.
+ * Create runtime constructors for a given sum type.
  *
  * @example
  * import { Member, create } from '@unsplash/sum-types'
@@ -211,15 +238,16 @@ interface Sum<A extends AnyMember> {
  *
  * // Depending upon your preferences you may prefer to destructure the
  * // returned object or effectively namespace it:
- * const { mk: { Sun, Rain }, match } = create<Weather>()
+ * const { Sun, Rain } = create<Weather>()
  * const Weather = create<Weather>()
  *
  * @since 0.1.0
  */
 // eslint-disable-next-line functional/functional-parameters
-export const create = <A extends AnyMember>(): Sum<A> => ({
-  mk: mkConstructors<A>(),
-})
+export const create = <A extends AnyMember>(): Constructors<A> =>
+  new Proxy({} as Constructors<A>, {
+    get: (__: Constructors<A>, tag: Tags<A>) => mkConstructor(tag),
+  })
 
 /**
  * A serialized representation of our sum type, isomorphic to the sum type
