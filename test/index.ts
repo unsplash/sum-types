@@ -36,6 +36,14 @@ describe("index", () => {
 
         expect(f(Weather.mk.Sun())).toBe("not rain")
       })
+
+      it("unionises matchW branch return types", () => {
+        type Sum = Member<"A", string> | Member<"B", number>
+        const { matchW } = create<Sum>()
+        expectType<(x: Sum) => number | string>(
+          matchW({ A: () => 123, B: () => "hello" }),
+        )
+      })
     })
   })
 
