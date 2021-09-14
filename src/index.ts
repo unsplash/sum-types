@@ -146,8 +146,8 @@ const mkMatch =
   <B>(fs: Cases<A, B>) =>
   (x: A): B => {
     const g = fs[x[tagKey] as keyof typeof fs]
-    // eslint-disable-next-line functional/no-conditional-statement
     // TODO: why do we have an error here now? TS bug?
+    // eslint-disable-next-line functional/no-conditional-statement
     if (g) return g(x[valueKey])
 
     const h = (fs as CasesWildcard<A, B>)[_]
