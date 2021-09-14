@@ -88,7 +88,7 @@ type Constructor<
   A extends AnyMember,
   K extends string,
   B = Values<Narrow<A, K>>,
-> = B extends undefined ? () => A : (x: B) => A
+> = readonly [B] extends readonly [undefined] ? () => A : (x: B) => A
 
 /**
  * Create a constructor. Overloaded so that members without data don't have to
