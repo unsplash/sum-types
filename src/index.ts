@@ -60,35 +60,17 @@ export interface Member<K extends string = string, A = undefined> {
 
 type AnyMember = Member<string, unknown>
 
-type Tags<A extends AnyMember> = A[TagKey]
-type Values<A extends AnyMember> = A[ValueKey]
-
-/**
- * Narrow a sum type to a subset of its members based upon the provided tag(s).
- * Typically used to narrow a sum type down to a single member.
- *
- * @example
- * type Sum
- *   = Member<"1", 1>
- *   | Member<"2", 2>
- *   | Member<"3", 3>
- *
- * // Equals: Member<"1", 1> | Member<"3", 3>
- * Narrow<Sum, "1" | "3">
- */
-type Narrow<A extends AnyMember, K extends Tags<A>> = Extract<
-  A,
-  Member<K, unknown>
->
+type Tag<A extends AnyMember> = A[TagKey]
+type Value<A extends AnyMember> = A[ValueKey]
 
 /**
  * A type-level representation of the overloaded `mkConstructor` function.
  */
-type Constructor<
-  A extends AnyMember,
-  K extends string,
-  B = Values<Narrow<A, K>>,
-> = readonly [B] extends readonly [undefined] ? () => A : (x: B) => A
+type Constructor<A extends AnyMember, B> = readonly [B] extends readonly [
+  undefined,
+]
+  ? () => A
+  : (x: B) => A
 
 /**
  * Create a constructor. Overloaded so that members without data don't have to
@@ -101,13 +83,13 @@ function mkConstructor(k: string) {
 }
 
 type Constructors<A extends AnyMember> = {
-  readonly [K in Tags<A>]: Constructor<A, K>
+  readonly [V in A as Tag<V>]: Constructor<A, Value<V>>
 }
 
 // eslint-disable-next-line functional/functional-parameters
 const mkConstructors = <A extends AnyMember>(): Constructors<A> =>
   new Proxy({} as Constructors<A>, {
-    get: (__: Constructors<A>, tag: Tags<A>) => mkConstructor(tag),
+    get: (__: Constructors<A>, tag: Tag<A>) => mkConstructor(tag),
   })
 
 /**
@@ -141,7 +123,7 @@ export const _ = Symbol("@unsplash/sum-types pattern matching wildcard")
  * Ensures that a {@link match} expression covers all cases.
  */
 type CasesExhaustive<A extends AnyMember, B> = {
-  readonly [K in Tags<A>]: (x: Values<Narrow<A, K>>) => B
+  readonly [V in A as Tag<V>]: (val: Value<V>) => B
 }
 
 /**
@@ -163,17 +145,19 @@ type Match<A extends AnyMember> = <B>(fs: Cases<A, B>) => (x: A) => B
 const mkMatch =
   <A extends AnyMember>() => // eslint-disable-line functional/functional-parameters
   <B>(fs: Cases<A, B>) =>
-  (x: A): B => {
-    const g = fs[x[tagKey] as keyof typeof fs]
+  (a: A): B => {
+    const tag = a[tagKey] as Tag<A>
+
+    const g = fs[tag]
     // eslint-disable-next-line functional/no-conditional-statement
-    if (g) return g(x[valueKey])
+    if (g) return g(a[valueKey])
 
     const h = (fs as CasesWildcard<A, B>)[_]
     // eslint-disable-next-line functional/no-conditional-statement
     if (h) return h()
 
     // eslint-disable-next-line functional/no-throw-statement
-    throw new Error(`Failed to pattern match against tag "${x[tagKey]}".`)
+    throw new Error(`Failed to pattern match against tag "${tag}".`)
   }
 
 /**
@@ -231,7 +215,7 @@ export const create = <A extends AnyMember>(): Sum<A> => ({
  * A serialized representation of our sum type, isomorphic to the sum type
  * itself. The conditional type distributes over the union members.
  */
-type Serialized<A> = A extends AnyMember ? readonly [Tags<A>, Values<A>] : never
+type Serialized<A> = A extends AnyMember ? readonly [Tag<A>, Value<A>] : never
 
 /**
  * Serialize any sum type member into a tuple of its discriminant tag and its
