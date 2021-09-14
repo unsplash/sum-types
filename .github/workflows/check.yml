@@ -38,8 +38,8 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: yarn fmt --check
 
-  test:
-    name: Test
+  unit:
+    name: Unit test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -48,7 +48,7 @@ jobs:
           node-version: 16.x
           cache: yarn
       - run: yarn install --frozen-lockfile
-      - run: yarn test
+      - run: yarn unit
 
   docs:
     name: Docs

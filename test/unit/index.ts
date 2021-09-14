@@ -1,20 +1,10 @@
-/* eslint-disable functional/functional-parameters, functional/no-expression-statement */
+/* eslint-disable functional/functional-parameters */
 
-import { create, _, serialize, deserialize, Member } from "../src/index"
+import { create, _, serialize, deserialize, Member } from "../../src/index"
 import fc from "fast-check"
 
 describe("index", () => {
   describe("create", () => {
-    describe("constructors", () => {
-      it("don't distribute over union input", () => {
-        type Sum = Member<"A", string | number>
-        const {
-          mk: { A },
-        } = create<Sum>()
-        A // $ExpectType (x: string | number) => Sum
-      })
-    })
-
     describe("pattern match function", () => {
       it("can pattern match", () => {
         type Weather =
@@ -34,13 +24,6 @@ describe("index", () => {
         )
 
         expect(f(Weather.mk.Sun())).toBe("not rain")
-      })
-
-      it("unionises matchW branch return types", () => {
-        type Sum = Member<"A", string> | Member<"B", number>
-        const { matchW } = create<Sum>()
-        // $ExpectType (x: Sum) => string | number
-        matchW({ A: () => 123, B: () => "hello" })
       })
     })
   })

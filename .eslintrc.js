@@ -10,7 +10,7 @@ module.exports = {
     "plugin:functional/all",
   ],
   parserOptions: {
-    project: "./tsconfig.json",
+    project: "./tsconfig.lint.json",
   },
   rules: {
     "functional/prefer-type-literal": 0,
