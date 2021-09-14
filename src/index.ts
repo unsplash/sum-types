@@ -145,8 +145,7 @@ const mkMatch =
   <A extends AnyMember>() => // eslint-disable-line functional/functional-parameters
   <B>(fs: Cases<A, B>) =>
   (x: A): B => {
-    const g = fs[x[tagKey] as keyof typeof fs]
-    // TODO: why do we have an error here now? TS bug?
+    const g = fs[x[tagKey] as Tag<A>]
     // eslint-disable-next-line functional/no-conditional-statement
     if (g) return g(x[valueKey])
 
