@@ -66,10 +66,9 @@ type Value<A extends AnyMember> = A[ValueKey]
 /**
  * A type-level representation of the overloaded `mkConstructor` function.
  */
-type Constructor<
-  A extends AnyMember,
-  B,
-> = B extends undefined ? () => A : (x: B) => A
+type Constructor<A extends AnyMember, B> = B extends undefined
+  ? () => A
+  : (x: B) => A
 
 /**
  * Create a constructor. Overloaded so that members without data don't have to
@@ -82,7 +81,7 @@ function mkConstructor(k: string) {
 }
 
 type Constructors<A extends AnyMember> = {
-  readonly [V in A as Tag<V>]: Constructor<A, Value<V>>;
+  readonly [V in A as Tag<V>]: Constructor<A, Value<V>>
 }
 
 // eslint-disable-next-line functional/functional-parameters
@@ -122,7 +121,7 @@ export const _ = Symbol("@unsplash/sum-types pattern matching wildcard")
  * Ensures that a {@link match} expression covers all cases.
  */
 type CasesExhaustive<A extends AnyMember, B> = {
-  readonly [V in A as Tag<V>]: (val: Value<V>) => B;
+  readonly [V in A as Tag<V>]: (val: Value<V>) => B
 }
 
 /**
