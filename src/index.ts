@@ -156,7 +156,7 @@ const mkMatch =
     if (h) return h()
 
     // eslint-disable-next-line functional/no-throw-statement
-    throw new Error(`Failed to pattern match against tag "${a[tagKey]}".`)
+    throw new Error(`Failed to pattern match against tag "${tag}".`)
   }
 
 interface Sum<A extends AnyMember> {
