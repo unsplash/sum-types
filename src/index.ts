@@ -68,8 +68,8 @@ type Value<A extends AnyMember> = A[ValueKey]
  */
 type Constructor<
   A extends AnyMember,
-  Value,
-> = Value extends undefined ? () => A : (x: Value) => A
+  B,
+> = B extends undefined ? () => A : (x: B) => A
 
 /**
  * Create a constructor. Overloaded so that members without data don't have to
