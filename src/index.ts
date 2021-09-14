@@ -176,7 +176,12 @@ const mkMatch =
     throw new Error(`Failed to pattern match against tag "${x[tagKey]}".`)
   }
 
-interface Sum<A extends AnyMember> {
+/**
+ * The output of `create`, providing constructors and pattern matching.
+ *
+ * @since 0.1.0
+ */
+export interface Sum<A extends AnyMember> {
   /**
    * An object of constructors for the sum type's members.
    *
