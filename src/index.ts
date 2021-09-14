@@ -66,7 +66,9 @@ type Value<A extends AnyMember> = A[ValueKey]
 /**
  * A type-level representation of the overloaded `mkConstructor` function.
  */
-type Constructor<A extends AnyMember, B> = B extends undefined
+type Constructor<A extends AnyMember, B> = readonly [B] extends readonly [
+  undefined,
+]
   ? () => A
   : (x: B) => A
 
@@ -158,7 +160,12 @@ const mkMatch =
     throw new Error(`Failed to pattern match against tag "${tag}".`)
   }
 
-interface Sum<A extends AnyMember> {
+/**
+ * The output of `create`, providing constructors and pattern matching.
+ *
+ * @since 0.1.0
+ */
+export interface Sum<A extends AnyMember> {
   /**
    * An object of constructors for the sum type's members.
    *
