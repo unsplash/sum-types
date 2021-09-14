@@ -140,25 +140,40 @@ type CasesWildcard<A extends AnyMember, B> = Partial<CasesExhaustive<A, B>> & {
  */
 type Cases<A extends AnyMember, B> = CasesExhaustive<A, B> | CasesWildcard<A, B>
 
+type ReturnTypes<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  A extends Record<any, (...xs: ReadonlyArray<any>) => unknown>,
+> = ReturnType<A[keyof A]>
+
+type MatchW<A extends AnyMember> = <B extends Cases<A, unknown>>(
+  fs: B,
+) => (x: A) => ReturnTypes<B>
+
 type Match<A extends AnyMember> = <B>(fs: Cases<A, B>) => (x: A) => B
 
-const mkMatch =
-  <A extends AnyMember>() => // eslint-disable-line functional/functional-parameters
-  <B>(fs: Cases<A, B>) =>
-  (a: A): B => {
-    const tag = a[tagKey] as Tag<A>
+const mkMatchW =
+  <A extends AnyMember>(): MatchW<A> => // eslint-disable-line functional/functional-parameters
+  <B extends Cases<A, unknown>>(fs: B) =>
+  <C extends ReturnTypes<B>>(x: A): C => {
+    const tag = x[tagKey] as Tag<A>
 
     const g = fs[tag]
-    // eslint-disable-next-line functional/no-conditional-statement
-    if (g) return g(a[valueKey])
+    // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-return
+    if (g) return g(x[valueKey]) as C
 
     const h = (fs as CasesWildcard<A, B>)[_]
-    // eslint-disable-next-line functional/no-conditional-statement
-    if (h) return h()
+    // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-return
+    if (h) return h() as C
 
     // eslint-disable-next-line functional/no-throw-statement
     throw new Error(`Failed to pattern match against tag "${tag}".`)
   }
+
+const mkMatch =
+  <A extends AnyMember>(): Match<A> => // eslint-disable-line functional/functional-parameters
+  <B>(fs: Cases<A, B>) =>
+  (x: A): B =>
+    mkMatchW<A>()<Cases<A, B>>(fs)(x) as B
 
 /**
  * The output of `create`, providing constructors and pattern matching.
@@ -185,6 +200,20 @@ export interface Sum<A extends AnyMember> {
    * @since 0.1.0
    */
   readonly match: Match<A>
+  /**
+   * Pattern match against each member of a sum type. All members must
+   * exhaustively be covered unless a wildcard (@link \_) is present. Unionises
+   * the return types of the branches, hence the "W" suffix ("widen").
+   *
+   * @example
+   * matchW({
+   *   Sun: () => 123,
+   *   [_]: () => 'the return types can be different',
+   * })
+   *
+   * @since 0.1.0
+   */
+  readonly matchW: MatchW<A>
 }
 
 /**
@@ -209,6 +238,7 @@ export interface Sum<A extends AnyMember> {
 export const create = <A extends AnyMember>(): Sum<A> => ({
   mk: mkConstructors<A>(),
   match: mkMatch<A>(),
+  matchW: mkMatchW<A>(),
 })
 
 /**

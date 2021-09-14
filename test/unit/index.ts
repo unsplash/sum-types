@@ -1,21 +1,10 @@
 /* eslint-disable functional/functional-parameters */
 
-import { create, _, serialize, deserialize, Member } from "../src/index"
+import { create, _, serialize, deserialize, Member } from "../../src/index"
 import fc from "fast-check"
-import { expectType } from "ts-expect"
 
 describe("index", () => {
   describe("create", () => {
-    describe("constructors", () => {
-      it("don't distribute over union input", () => {
-        type Sum = Member<"A", string | number>
-        const {
-          mk: { A },
-        } = create<Sum>()
-        expectType<(x: string | number) => Sum>(A)
-      })
-    })
-
     describe("pattern match function", () => {
       it("can pattern match", () => {
         type Weather =

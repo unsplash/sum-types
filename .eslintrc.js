@@ -1,15 +1,16 @@
 module.exports = {
   parser: "@typescript-eslint/parser",
-  plugins: ["@typescript-eslint", "functional"],
+  plugins: ["@typescript-eslint", "expect-type", "functional"],
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:expect-type/recommended",
     "plugin:functional/all",
   ],
   parserOptions: {
-    project: "./tsconfig.json",
+    project: "./tsconfig.lint.json",
   },
   rules: {
     "functional/prefer-type-literal": 0,
