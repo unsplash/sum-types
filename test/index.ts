@@ -1,8 +1,7 @@
-/* eslint-disable functional/functional-parameters */
+/* eslint-disable functional/functional-parameters, functional/no-expression-statement */
 
 import { create, _, serialize, deserialize, Member } from "../src/index"
 import fc from "fast-check"
-import { expectType } from "ts-expect"
 
 describe("index", () => {
   describe("create", () => {
@@ -12,7 +11,7 @@ describe("index", () => {
         const {
           mk: { A },
         } = create<Sum>()
-        expectType<(x: string | number) => Sum>(A)
+        A // $ExpectType (x: string | number) => Sum
       })
     })
 
@@ -40,9 +39,8 @@ describe("index", () => {
       it("unionises matchW branch return types", () => {
         type Sum = Member<"A", string> | Member<"B", number>
         const { matchW } = create<Sum>()
-        expectType<(x: Sum) => number | string>(
-          matchW({ A: () => 123, B: () => "hello" }),
-        )
+        // $ExpectType (x: Sum) => string | number
+        matchW({ A: () => 123, B: () => "hello" })
       })
     })
   })
