@@ -144,17 +144,17 @@ type Match<A extends AnyMember> = <B>(fs: Cases<A, B>) => (x: A) => B
 const mkMatch =
   <A extends AnyMember>() => // eslint-disable-line functional/functional-parameters
   <B>(fs: Cases<A, B>) =>
-  (x: A): B => {
-    const g = fs[x[tagKey] as Tag<A>]
+  (a: A): B => {
+    const g = fs[a[tagKey] as Tag<A>]
     // eslint-disable-next-line functional/no-conditional-statement
-    if (g) return g(x[valueKey])
+    if (g) return g(a[valueKey])
 
     const h = (fs as CasesWildcard<A, B>)[_]
     // eslint-disable-next-line functional/no-conditional-statement
     if (h) return h()
 
     // eslint-disable-next-line functional/no-throw-statement
-    throw new Error(`Failed to pattern match against tag "${x[tagKey]}".`)
+    throw new Error(`Failed to pattern match against tag "${a[tagKey]}".`)
   }
 
 interface Sum<A extends AnyMember> {
