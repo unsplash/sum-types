@@ -7,8 +7,21 @@ import {
   deserialize,
   Member,
   matchOn,
+  match,
 } from "../src/index"
 import fc from "fast-check"
+import { pipe } from "fp-ts/function"
+import * as A from "fp-ts/ReadonlyArray"
+
+declare const xs: ReadonlyArray<{ readonly prop: string }>
+export const _a = pipe(
+  xs,
+  A.map(x => x.prop),
+)
+type Y = Member<"Y1">
+declare const y: Y
+// TODO: return type inferred as unknown
+export const _b = pipe(y, match({ Y1: () => 123 }))
 
 describe("index", () => {
   describe("matchOn", () => {
