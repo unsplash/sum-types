@@ -145,7 +145,9 @@ const mkMatch =
   <A extends AnyMember>() => // eslint-disable-line functional/functional-parameters
   <B>(fs: Cases<A, B>) =>
   (a: A): B => {
-    const g = fs[a[tagKey] as Tag<A>]
+    const tag = a[tagKey] as Tag<A>
+
+    const g = fs[tag]
     // eslint-disable-next-line functional/no-conditional-statement
     if (g) return g(a[valueKey])
 
