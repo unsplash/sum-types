@@ -159,11 +159,11 @@ const mkMatchW =
 
     const g = fs[tag]
     // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-return
-    if (g) return g(x[valueKey]) as C
+    if (g !== undefined) return g(x[valueKey]) as C
 
     const h = (fs as CasesWildcard<A, B>)[_]
     // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-return
-    if (h) return h() as C
+    if (h !== undefined) return h() as C
 
     // eslint-disable-next-line functional/no-throw-statement
     throw new Error(`Failed to pattern match against tag "${tag}".`)
