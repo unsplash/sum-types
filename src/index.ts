@@ -53,7 +53,7 @@ type ValueKey = typeof valueKey
  *
  * @since 0.1.0
  */
-export interface Member<K extends string = string, A = undefined> {
+export interface Member<K extends string = never, A = undefined> {
   readonly [tagKey]: K
   readonly [valueKey]: A
 }
