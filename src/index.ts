@@ -76,8 +76,8 @@ type Constructor<A extends AnyMember, B> = readonly [B] extends readonly [
  * Create a constructor. Overloaded so that members without data don't have to
  * explicitly pass `undefined`.
  */
-function mkConstructor<K extends string>(k: K): <A>(x: A) => Member<K, A>
-function mkConstructor<K extends string>(k: K): () => Member<K, undefined>
+function mkConstructor<A extends AnyMember>(k: Tag<A>): (x: Value<A>) => A
+function mkConstructor<A extends AnyMember>(k: Tag<A>): () => A
 function mkConstructor(k: string) {
   return (x: unknown) => ({ [tagKey]: k, [valueKey]: x })
 }
