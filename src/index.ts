@@ -66,9 +66,11 @@ type Value<A extends AnyMember> = A[ValueKey]
 /**
  * A type-level representation of the overloaded `mkConstructor` function.
  */
-type Constructor<A extends AnyMember, B> = (
-  x: B extends undefined ? void : B,
-) => A
+type Constructor<A extends AnyMember, B> = readonly [B] extends readonly [
+  undefined,
+]
+  ? () => A
+  : (x: B) => A
 
 /**
  * Create a constructor. Overloaded so that members without data don't have to

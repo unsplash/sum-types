@@ -7,7 +7,7 @@ type A = Member<"A1", string | number>
 const {
   mk: { A1 },
 } = create<A>()
-A1 // $ExpectType Constructor<A, string | number>
+A1 // $ExpectType (x: string | number) => A
 
 //# match does not unionise match branch return types
 type B = Member<"B1", string> | Member<"B2", number>
@@ -22,22 +22,23 @@ matchW({ C1: () => 123, C2: () => "hello" })
 
 type D = Member<"C1", string> | Member<"C2", number> | Member<"C3">
 
-// $ExpectType Constructor<D, string>
+// $ExpectType (x: string) => D
 const constructor1 = mkConstructor<D>()("C1")
 
 // $ExpectError
 constructor1(2)
 constructor1("2")
 
-// $ExpectType Constructor<D, number>
+// $ExpectType (x: number) => D
 const constructor2 = mkConstructor<D>()("C2")
 
 constructor2(2)
 // $ExpectError
 constructor2("2")
 
-// $ExpectType Constructor<D, undefined>
-const constructor3 = mkConstructor<D>()("C3")
+const newLocal = mkConstructor<D>()
+// $ExpectType () => D
+const constructor3 = newLocal("C3")
 
 constructor3()
 // $ExpectError
