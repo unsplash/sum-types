@@ -58,7 +58,7 @@ export interface Member<K extends string = never, A = undefined> {
   readonly [valueKey]: A
 }
 
-type AnyMember = Member<string, unknown>
+export type AnyMember = Member<string, unknown>
 
 type Tag<A extends AnyMember> = A[TagKey]
 type Value<A extends AnyMember> = A[ValueKey]
@@ -66,9 +66,9 @@ type Value<A extends AnyMember> = A[ValueKey]
 /**
  * A type-level representation of the overloaded `mkConstructor` function.
  */
-type Constructor<A extends AnyMember, B> = readonly [B] extends readonly [
-  undefined,
-]
+export type Constructor<A extends AnyMember, B> = readonly [
+  B,
+] extends readonly [undefined]
   ? () => A
   : (x: B) => A
 
