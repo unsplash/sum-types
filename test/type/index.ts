@@ -36,20 +36,8 @@ type D = Member<"C1", string> | Member<"C2", number> | Member<"C3">
 // $ExpectType (x: string) => D
 const constructor1 = mkConstructor<D>()("C1")
 
-// $ExpectError
-constructor1(2)
-constructor1("2")
-
 // $ExpectType (x: number) => D
 const constructor2 = mkConstructor<D>()("C2")
 
-constructor2(2)
-// $ExpectError
-constructor2("2")
-
 // $ExpectType () => D
 const constructor3 = mkConstructor<D>()("C3")
-
-constructor3()
-// $ExpectError
-constructor3(1)
