@@ -59,6 +59,8 @@ export interface Member<K extends string = never, A = undefined> {
 }
 
 /**
+ * Any member.
+ *
  * @since 0.1.0
  */
 export type AnyMember = Member<string, unknown>
