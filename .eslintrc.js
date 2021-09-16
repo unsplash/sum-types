@@ -19,6 +19,16 @@ module.exports = {
       { ignorePattern: "(describe)|(it)|(expect)|(fc.)" },
     ],
     "@typescript-eslint/array-type": [1, { default: "generic" }],
-    "@typescript-eslint/strict-boolean-expressions": 2,
+    "@typescript-eslint/strict-boolean-expressions": [
+      2,
+      {
+        /** Unset default (`true`) */
+        allowString: false,
+        /** Unset default (`true`) */
+        allowNumber: false,
+        /** Unset default (`true`) */
+        allowNullableObject: false,
+      },
+    ],
   },
 }
