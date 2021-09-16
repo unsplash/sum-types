@@ -76,7 +76,7 @@ export type Constructor<A extends AnyMember, B> = readonly [
  * Create a constructor. Overloaded so that members without data don't have to
  * explicitly pass `undefined`.
  */
-export declare function mkConstructor<A extends AnyMember>(): <
+export declare const mkConstructor: <A extends AnyMember>() => <
   T extends Tag<A>,
   F extends Extract<A, Member<T, unknown>>,
 >(
