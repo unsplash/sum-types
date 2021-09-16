@@ -47,9 +47,8 @@ constructor2(2)
 // $ExpectError
 constructor2("2")
 
-const newLocal = mkConstructor<D>()
 // $ExpectType () => D
-const constructor3 = newLocal("C3")
+const constructor3 = mkConstructor<D>()("C3")
 
 constructor3()
 // $ExpectError
