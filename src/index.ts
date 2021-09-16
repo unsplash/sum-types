@@ -58,6 +58,9 @@ export interface Member<K extends string = never, A = undefined> {
   readonly [valueKey]: A
 }
 
+/**
+ * @since 0.1.0
+ */
 export type AnyMember = Member<string, unknown>
 
 type Tag<A extends AnyMember> = A[TagKey]
@@ -65,6 +68,8 @@ type Value<A extends AnyMember> = A[ValueKey]
 
 /**
  * A type-level representation of the overloaded `mkConstructor` function.
+ *
+ * @since 0.1.0
  */
 export type Constructor<A extends AnyMember, B> = readonly [
   B,
@@ -75,6 +80,8 @@ export type Constructor<A extends AnyMember, B> = readonly [
 /**
  * Create a constructor. Overloaded so that members without data don't have to
  * explicitly pass `undefined`.
+ *
+ * @since 0.1.0
  */
 /* eslint-disable functional/functional-parameters */
 export const mkConstructor =
