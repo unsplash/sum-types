@@ -81,11 +81,11 @@ export const mkConstructor =
   <A extends AnyMember>() =>
   <T extends Tag<A>, F extends Extract<A, Member<T, unknown>>>(
     k: T,
-  ): Constructor<A, Value<F>> => {
-    const constructor = (x: Value<F>) =>
-      ({ [tagKey]: k, [valueKey]: x } as unknown as A)
-    return constructor as Constructor<A, Value<F>>
-  }
+  ): Constructor<A, Value<F>> =>
+    (x => ({ [tagKey]: k, [valueKey]: x } as unknown as A)) as Constructor<
+      A,
+      Value<F>
+    >
 /* eslint-enable functional/functional-parameters */
 
 type Constructors<A extends AnyMember> = {
