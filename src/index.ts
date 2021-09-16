@@ -76,12 +76,17 @@ export type Constructor<A extends AnyMember, B> = readonly [
  * Create a constructor. Overloaded so that members without data don't have to
  * explicitly pass `undefined`.
  */
-export declare const mkConstructor: <A extends AnyMember>() => <
-  T extends Tag<A>,
-  F extends Extract<A, Member<T, unknown>>,
->(
-  k: T,
-) => Constructor<A, Value<F>>
+/* eslint-disable functional/functional-parameters */
+export const mkConstructor =
+  <A extends AnyMember>() =>
+  <T extends Tag<A>, F extends Extract<A, Member<T, unknown>>>(
+    k: T,
+  ): Constructor<A, Value<F>> => {
+    const constructor = (x: Value<F>) =>
+      ({ [tagKey]: k, [valueKey]: x } as unknown as A)
+    return constructor as Constructor<A, Value<F>>
+  }
+/* eslint-enable functional/functional-parameters */
 
 type Constructors<A extends AnyMember> = {
   readonly [V in A as Tag<V>]: Constructor<A, Value<V>>
