@@ -71,9 +71,8 @@ type Value<A extends AnyMember> = A[ValueKey]
  *
  * @since 0.1.0
  */
-export type Constructor<A extends AnyMember, B> = readonly [
-  B,
-] extends readonly [undefined]
+// eslint-disable-next-line functional/prefer-readonly-type
+export type Constructor<A extends AnyMember, B> = [B] extends [undefined]
   ? () => A
   : (x: B) => A
 
@@ -85,12 +84,12 @@ export type Constructor<A extends AnyMember, B> = readonly [
  */
 export const mkConstructor =
   <A extends AnyMember>() => // eslint-disable-line functional/functional-parameters
-  <T extends Tag<A>, F extends Extract<A, Member<T, unknown>>>(
+  <T extends Tag<A>>(
     k: T,
-  ): Constructor<A, Value<F>> =>
+  ): Constructor<A, Value<Extract<A, Member<T, unknown>>>> =>
     (x => ({ [tagKey]: k, [valueKey]: x } as unknown as A)) as Constructor<
       A,
-      Value<F>
+      Value<Extract<A, Member<T, unknown>>>
     >
 
 type Constructors<A extends AnyMember> = {
