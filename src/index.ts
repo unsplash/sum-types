@@ -78,9 +78,10 @@ type Constructor<A extends AnyMember, B> = readonly [B] extends readonly [
  */
 export declare function mkConstructor<A extends AnyMember>(): <
   T extends Tag<A>,
+  F extends Extract<A, Member<T, unknown>>,
 >(
   k: T,
-) => Constructor<A, Value<Extract<A, Member<T, unknown>>>>
+) => Constructor<A, Value<F>>
 
 type Constructors<A extends AnyMember> = {
   readonly [V in A as Tag<V>]: Constructor<A, Value<V>>
