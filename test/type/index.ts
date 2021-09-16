@@ -1,4 +1,4 @@
-/* eslint-disable functional/functional-parameters, functional/no-expression-statement */
+/* eslint-disable functional/functional-parameters, functional/no-expression-statement, @typescript-eslint/no-unused-vars */
 
 import {
   create,
