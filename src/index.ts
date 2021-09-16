@@ -83,9 +83,8 @@ export type Constructor<A extends AnyMember, B> = readonly [
  *
  * @since 0.1.0
  */
-/* eslint-disable functional/functional-parameters */
 export const mkConstructor =
-  <A extends AnyMember>() =>
+  <A extends AnyMember>() => // eslint-disable-line functional/functional-parameters
   <T extends Tag<A>, F extends Extract<A, Member<T, unknown>>>(
     k: T,
   ): Constructor<A, Value<F>> =>
@@ -93,7 +92,6 @@ export const mkConstructor =
       A,
       Value<F>
     >
-/* eslint-enable functional/functional-parameters */
 
 type Constructors<A extends AnyMember> = {
   readonly [V in A as Tag<V>]: Constructor<A, Value<V>>
