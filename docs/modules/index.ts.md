@@ -38,6 +38,7 @@ Added in v0.1.0
 
 - [utils](#utils)
   - [Member (interface)](#member-interface)
+  - [Sum (interface)](#sum-interface)
   - [\_](#_)
   - [create](#create)
   - [deserialize](#deserialize)
@@ -56,7 +57,7 @@ members.
 **Signature**
 
 ```ts
-export interface Member<K extends string = string, A = undefined> {
+export interface Member<K extends string = never, A = undefined> {
   readonly [tagKey]: K
   readonly [valueKey]: A
 }
@@ -71,6 +72,50 @@ type Weather = Member<'Sun'> | Member<'Rain', number>
 ```
 
 Added in v0.1.0
+
+## Sum (interface)
+
+The output of `create`, providing constructors and pattern matching.
+
+**Signature**
+
+```ts
+export interface Sum<A extends AnyMember> {
+  /**
+   * An object of constructors for the sum type's members.
+   *
+   * @since 0.1.0
+   */
+  readonly mk: Constructors<A>
+  /**
+   * Pattern match against each member of a sum type. All members must
+   * exhaustively be covered unless a wildcard (@link \_) is present.
+   *
+   * @example
+   * match({
+   *   Rain: (n) => `It's rained ${n} today!`,
+   *   [_]: () => 'Nice weather today.',
+   * })
+   *
+   * @since 0.1.0
+   */
+  readonly match: Match<A>
+  /**
+   * Pattern match against each member of a sum type. All members must
+   * exhaustively be covered unless a wildcard (@link \_) is present. Unionises
+   * the return types of the branches, hence the "W" suffix ("widen").
+   *
+   * @example
+   * matchW({
+   *   Sun: () => 123,
+   *   [_]: () => 'the return types can be different',
+   * })
+   *
+   * @since 0.1.0
+   */
+  readonly matchW: MatchW<A>
+}
+```
 
 ## \_
 

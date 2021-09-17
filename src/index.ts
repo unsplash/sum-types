@@ -59,9 +59,7 @@ export interface Member<K extends string = never, A = undefined> {
 }
 
 /**
- * Any member.
- *
- * @since 0.1.0
+ * @internal
  */
 export type AnyMember = Member<string, unknown>
 
@@ -69,9 +67,9 @@ type Tag<A extends AnyMember> = A[TagKey]
 type Value<A extends AnyMember> = A[ValueKey]
 
 /**
- * A type-level representation of the overloaded `mkConstructor` function.
+ * A type-level representation of the `mkConstructor` function.
  *
- * @since 0.1.0
+ * @internal
  */
 // eslint-disable-next-line functional/prefer-readonly-type
 export type Constructor<A extends AnyMember, B> = [B] extends [undefined]
@@ -79,10 +77,7 @@ export type Constructor<A extends AnyMember, B> = [B] extends [undefined]
   : (x: B) => A
 
 /**
- * Create a constructor. Overloaded so that members without data don't have to
- * explicitly pass `undefined`.
- *
- * @since 0.1.0
+ * @internal
  */
 export const mkConstructor =
   <A extends AnyMember>() => // eslint-disable-line functional/functional-parameters
@@ -190,7 +185,7 @@ const mkMatch =
 /**
  * The output of `create`, providing constructors and pattern matching.
  *
- * @since 0.1.0
+ * @internal
  */
 export interface Sum<A extends AnyMember> {
   /**
