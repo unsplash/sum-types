@@ -58,29 +58,41 @@ export interface Member<K extends string = never, A = undefined> {
   readonly [valueKey]: A
 }
 
-type AnyMember = Member<string, unknown>
+/**
+ * Any member.
+ *
+ * @since 0.1.0
+ */
+export type AnyMember = Member<string, unknown>
 
 type Tag<A extends AnyMember> = A[TagKey]
 type Value<A extends AnyMember> = A[ValueKey]
 
 /**
  * A type-level representation of the overloaded `mkConstructor` function.
+ *
+ * @since 0.1.0
  */
-type Constructor<A extends AnyMember, B> = readonly [B] extends readonly [
-  undefined,
-]
+// eslint-disable-next-line functional/prefer-readonly-type
+export type Constructor<A extends AnyMember, B> = [B] extends [undefined]
   ? () => A
   : (x: B) => A
 
 /**
  * Create a constructor. Overloaded so that members without data don't have to
  * explicitly pass `undefined`.
+ *
+ * @since 0.1.0
  */
-function mkConstructor<A extends AnyMember>(k: Tag<A>): (x: Value<A>) => A
-function mkConstructor<A extends AnyMember>(k: Tag<A>): () => A
-function mkConstructor(k: string) {
-  return (x: unknown) => ({ [tagKey]: k, [valueKey]: x })
-}
+export const mkConstructor =
+  <A extends AnyMember>() => // eslint-disable-line functional/functional-parameters
+  <T extends Tag<A>>(
+    k: T,
+  ): Constructor<A, Value<Extract<A, Member<T, unknown>>>> =>
+    (x => ({ [tagKey]: k, [valueKey]: x } as unknown as A)) as Constructor<
+      A,
+      Value<Extract<A, Member<T, unknown>>>
+    >
 
 type Constructors<A extends AnyMember> = {
   readonly [V in A as Tag<V>]: Constructor<A, Value<V>>
@@ -89,7 +101,7 @@ type Constructors<A extends AnyMember> = {
 // eslint-disable-next-line functional/functional-parameters
 const mkConstructors = <A extends AnyMember>(): Constructors<A> =>
   new Proxy({} as Constructors<A>, {
-    get: (__: Constructors<A>, tag: Tag<A>) => mkConstructor(tag),
+    get: (__: Constructors<A>, tag: Tag<A>) => mkConstructor()(tag),
   })
 
 /**
