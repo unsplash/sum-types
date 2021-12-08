@@ -249,10 +249,15 @@ export const create = <A extends AnyMember>(): Sum<A> => ({
 })
 
 /**
- * A serialized representation of our sum type, isomorphic to the sum type
- * itself. The conditional type distributes over the union members.
+ * The serialized representation of a sum type, isomorphic to the sum type
+ * itself.
+ *
+ * @since 0.1.1
  */
-type Serialized<A> = A extends AnyMember ? readonly [Tag<A>, Value<A>] : never
+// The conditional type distributes over the union members.
+export type Serialized<A> = A extends AnyMember
+  ? readonly [Tag<A>, Value<A>]
+  : never
 
 /**
  * Serialize any sum type member into a tuple of its discriminant tag and its
