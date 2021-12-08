@@ -38,6 +38,7 @@ Added in v0.1.0
 
 - [utils](#utils)
   - [Member (interface)](#member-interface)
+  - [Serialized (type alias)](#serialized-type-alias)
   - [Sum (interface)](#sum-interface)
   - [\_](#_)
   - [create](#create)
@@ -72,6 +73,19 @@ type Weather = Member<'Sun'> | Member<'Rain', number>
 ```
 
 Added in v0.1.0
+
+## Serialized (type alias)
+
+The serialized representation of a sum type, isomorphic to the sum type
+itself.
+
+**Signature**
+
+```ts
+export type Serialized<A> = A extends AnyMember ? readonly [Tag<A>, Value<A>] : never
+```
+
+Added in v0.1.1
 
 ## Sum (interface)
 
