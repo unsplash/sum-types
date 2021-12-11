@@ -32,6 +32,11 @@ The library is available on the npm registry: [@unsplash/sum-types](https://www.
 
 Note that due to usage of `Proxy` and `Symbol` this library only supports ES2015+.
 
+The following bindings are also available:
+
+- [@unsplash/sum-types-fp-ts](https://github.com/unsplash/sum-types-fp-ts)
+- [@unsplash/sum-types-io-ts](https://github.com/unsplash/sum-types-io-ts)
+
 ## Motivation
 
 The library solves a number of problems we've experienced at Unsplash with alternative libraries in this space. Specifically:
