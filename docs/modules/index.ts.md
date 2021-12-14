@@ -58,7 +58,7 @@ members.
 **Signature**
 
 ```ts
-export interface Member<K extends string = never, A = undefined> {
+export interface Member<K extends string = never, A = null> {
   readonly [tagKey]: K
   readonly [valueKey]: A
 }
