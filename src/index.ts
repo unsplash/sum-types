@@ -137,10 +137,10 @@ type CasesExhaustive<A extends AnyMember, B> = {
  * Enables a {@link match} expression to cover only some cases provided a
  * wildcard case is declared with which to match the remaining cases.
  */
-// Don't reuse `CasesExhaustive` here (via `Partial`), it causes exhaustive
-// errors to always point to the absence of a wildcard.
+// Don't directly reuse `CasesExhaustive` here (via `Partial`), it causes
+// exhaustive errors to always point to the absence of a wildcard.
 type CasesWildcard<A extends AnyMember, B> = {
-  readonly [V in A as Tag<V>]?: (val: Value<V>) => B
+  readonly [K in keyof CasesExhaustive<A, B>]?: CasesExhaustive<A, B>[K]
 } & {
   readonly [_]: () => B
 }
