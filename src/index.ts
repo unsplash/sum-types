@@ -137,7 +137,11 @@ type CasesExhaustive<A extends AnyMember, B> = {
  * Enables a {@link match} expression to cover only some cases provided a
  * wildcard case is declared with which to match the remaining cases.
  */
-type CasesWildcard<A extends AnyMember, B> = Partial<CasesExhaustive<A, B>> & {
+// Don't directly reuse `CasesExhaustive` here (via `Partial`), it causes
+// exhaustive errors to always point to the absence of a wildcard.
+type CasesWildcard<A extends AnyMember, B> = {
+  readonly [K in keyof CasesExhaustive<A, B>]?: CasesExhaustive<A, B>[K]
+} & {
   readonly [_]: () => B
 }
 
@@ -145,7 +149,8 @@ type CasesWildcard<A extends AnyMember, B> = Partial<CasesExhaustive<A, B>> & {
  * Ensures that a {@link match} expression either covers all cases or contains
  * a wildcard for matching the remaining cases.
  */
-type Cases<A extends AnyMember, B> = CasesExhaustive<A, B> | CasesWildcard<A, B>
+// The order of this union impacts exhaustive error reporting.
+type Cases<A extends AnyMember, B> = CasesWildcard<A, B> | CasesExhaustive<A, B>
 
 type ReturnTypes<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
