@@ -29,6 +29,13 @@ describe("index", () => {
   })
 
   describe("serialize and deserialize", () => {
+    it("serialize nullary constructors to null value", () => {
+      type Sum = Member<"foo">
+      const Sum = create<Sum>()
+
+      expect(serialize(Sum.mk.foo())).toEqual(["foo", null])
+    })
+
     it("are reversible", () => {
       type Sum = Member<string, number>
 

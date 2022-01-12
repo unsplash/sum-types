@@ -83,11 +83,17 @@ export const mkConstructor =
   <A extends AnyMember>() => // eslint-disable-line functional/functional-parameters
   <T extends Tag<A>>(
     k: T,
-  ): Constructor<A, Value<Extract<A, Member<T, unknown>>>> =>
-    (x => ({ [tagKey]: k, [valueKey]: x } as unknown as A)) as Constructor<
-      A,
-      Value<Extract<A, Member<T, unknown>>>
-    >
+  ): Constructor<A, Value<Extract<A, Member<T, unknown>>>> => {
+    // We use `arguments` to distinguish between a missing argument and an
+    // explicit consumer-provided `undefined` value.
+    return function (x) {
+      return {
+        [tagKey]: k,
+        // eslint-disable-next-line functional/functional-parameters
+        [valueKey]: arguments.length === 0 ? null : x,
+      } as unknown as A
+    } as Constructor<A, Value<Extract<A, Member<T, unknown>>>>
+  }
 
 type Constructors<A extends AnyMember> = {
   readonly [V in A as Tag<V>]: Constructor<A, Value<V>>
