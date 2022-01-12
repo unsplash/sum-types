@@ -2,6 +2,10 @@
 
 This project adheres to semantic versioning.
 
+## 0.2.1 (2022-01-12)
+
+Fix runtime representation of nullary constructors.
+
 ## 0.2.0 (2022-01-12)
 
 Exhaustive checking in pattern matching now reports on missing members. Previously it would report on a missing wildcard.
