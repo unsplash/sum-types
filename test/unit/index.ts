@@ -30,10 +30,11 @@ describe("index", () => {
 
   describe("serialize and deserialize", () => {
     it("serialize nullary constructors to null value", () => {
-      type Sum = Member<"foo">
+      type Sum = Member<"foo"> | Member<"bar", undefined>
       const Sum = create<Sum>()
 
       expect(serialize(Sum.mk.foo())).toEqual(["foo", null])
+      expect(serialize(Sum.mk.bar(undefined))).toEqual(["bar", undefined])
     })
 
     it("are reversible", () => {
