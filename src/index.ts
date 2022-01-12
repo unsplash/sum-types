@@ -53,7 +53,7 @@ type ValueKey = typeof valueKey
  *
  * @since 0.1.0
  */
-export interface Member<K extends string = never, A = undefined> {
+export interface Member<K extends string = never, A = null> {
   readonly [tagKey]: K
   readonly [valueKey]: A
 }
@@ -72,7 +72,7 @@ type Value<A extends AnyMember> = A[ValueKey]
  * @internal
  */
 // eslint-disable-next-line functional/prefer-readonly-type
-export type Constructor<A extends AnyMember, B> = [B] extends [undefined]
+export type Constructor<A extends AnyMember, B> = [B] extends [null]
   ? () => A
   : (x: B) => A
 

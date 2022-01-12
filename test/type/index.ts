@@ -29,7 +29,7 @@ matchW({ C1: () => 123, C2: () => "hello" })
 // $ExpectType (x: string | number) => AnyMember
 type Test1 = Constructor<AnyMember, string | number>
 // $ExpectType () => AnyMember
-type Test2 = Constructor<AnyMember, undefined>
+type Test2 = Constructor<AnyMember, null>
 
 type D = Member<"C1", string> | Member<"C2", number> | Member<"C3">
 
