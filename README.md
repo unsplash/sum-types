@@ -36,6 +36,7 @@ The following bindings are also available:
 
 - [@unsplash/sum-types-fp-ts](https://github.com/unsplash/sum-types-fp-ts)
 - [@unsplash/sum-types-io-ts](https://github.com/unsplash/sum-types-io-ts)
+- [@unsplash/sum-types-fast-check](https://github.com/unsplash/sum-types-fast-check)
 
 ## Motivation
 
