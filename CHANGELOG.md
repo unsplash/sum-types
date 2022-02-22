@@ -2,6 +2,10 @@
 
 This project adheres to semantic versioning.
 
+## 0.2.2 (2022-02-22)
+
+Add ESM support.
+
 ## 0.2.1 (2022-01-12)
 
 Fix runtime representation of nullary constructors.
