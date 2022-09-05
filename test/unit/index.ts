@@ -5,20 +5,6 @@ import fc from "fast-check"
 
 describe("index", () => {
   describe("create", () => {
-    describe("constructors", () => {
-      it("are typesafe", () => {
-        type Sum = Member<"Nullary">
-        const Sum = create<Sum>()
-
-        // The relevance of `withFoo` is function subtyping.
-        const withFoo = <A>(f: (x: string) => A): A => f("foo")
-        const sum = withFoo(Sum.mk.Nullary)
-
-        const [, v] = serialize(sum)
-        expect(v).toBe(null)
-      })
-    })
-
     describe("pattern match function", () => {
       it("can pattern match", () => {
         type Weather =
@@ -37,7 +23,7 @@ describe("index", () => {
           ),
         )
 
-        expect(f(Weather.mk.Sun())).toBe("not rain")
+        expect(f(Weather.mk.Sun)).toBe("not rain")
       })
     })
   })
@@ -47,7 +33,7 @@ describe("index", () => {
       type Sum = Member<"foo"> | Member<"bar", undefined>
       const Sum = create<Sum>()
 
-      expect(serialize(Sum.mk.foo())).toEqual(["foo", null])
+      expect(serialize(Sum.mk.foo)).toEqual(["foo", null])
       expect(serialize(Sum.mk.bar(undefined))).toEqual(["bar", undefined])
     })
 

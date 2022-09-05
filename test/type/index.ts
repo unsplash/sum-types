@@ -1,12 +1,6 @@
 /* eslint-disable functional/functional-parameters, functional/no-expression-statement, @typescript-eslint/no-unused-vars */
 
-import {
-  create,
-  Member,
-  mkConstructor,
-  Constructor,
-  AnyMember,
-} from "../../src/index"
+import { create, Member, mkConstructor } from "../../src/index"
 
 //# constructors don't distribute over union input
 type A = Member<"A1", string | number>
@@ -26,11 +20,6 @@ const { matchW } = create<C>()
 // $ExpectType (x: C) => string | number
 matchW({ C1: () => 123, C2: () => "hello" })
 
-// $ExpectType (x: string | number) => AnyMember
-type Test1 = Constructor<AnyMember, string | number>
-// $ExpectType () => AnyMember
-type Test2 = Constructor<AnyMember, null>
-
 type D = Member<"C1", string> | Member<"C2", number> | Member<"C3">
 
 // $ExpectType (x: string) => D
@@ -39,5 +28,5 @@ const constructor1 = mkConstructor<D>()("C1")
 // $ExpectType (x: number) => D
 const constructor2 = mkConstructor<D>()("C2")
 
-// $ExpectType () => D
+// $ExpectType D
 const constructor3 = mkConstructor<D>()("C3")

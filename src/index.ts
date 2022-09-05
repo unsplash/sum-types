@@ -67,42 +67,54 @@ type Tag<A extends AnyMember> = A[TagKey]
 type Value<A extends AnyMember> = A[ValueKey]
 
 /**
- * A type-level representation of the `mkConstructor` function.
+ * A constructor is either `A -> B` or, if it's nullary, directly `B`.
+ *
+ * Indexes a sum union by the member tag to determine the constructor shape.
+ * The third type argument can be inferred via its default.
  *
  * @internal
  */
 // eslint-disable-next-line functional/prefer-readonly-type
-export type Constructor<A extends AnyMember, B> = [B] extends [null]
-  ? () => A
-  : (x: B) => A
+export type Constructor<
+  A extends AnyMember,
+  K extends Tag<A>,
+  V = Value<Extract<A, Member<K, unknown>>>,
+  // eslint-disable-next-line functional/prefer-readonly-type
+> = [V] extends [null] ? A : (x: V) => A
 
 /**
+ * Build a constructor for a member. If the member is nullary it won't be a
+ * function but a plain value.
+ *
  * @internal
  */
 export const mkConstructor =
-  <A extends AnyMember>() => // eslint-disable-line functional/functional-parameters
-  <T extends Tag<A>>(
-    k: T,
-  ): Constructor<A, Value<Extract<A, Member<T, unknown>>>> => {
-    // We use `arguments` to distinguish between a missing argument and an
-    // explicit consumer-provided `undefined` value.
-    return function (x) {
-      return {
-        [tagKey]: k,
-        // eslint-disable-next-line functional/functional-parameters
-        [valueKey]: arguments.length === 0 ? null : x,
-      } as unknown as A
-    } as Constructor<A, Value<Extract<A, Member<T, unknown>>>>
+  <A extends AnyMember = never>() => // eslint-disable-line functional/functional-parameters
+  <T extends Tag<A>>(k: T): Constructor<A, T> => {
+    const nonNullary = (v => ({
+      [tagKey]: k,
+      [valueKey]: v,
+    })) as Exclude<Constructor<A, T>, A>
+
+    const nullary = nonNullary(null) as unknown as A
+
+    // We don't know at runtime if the member is nullary or not, so we'll
+    // return an object which can act as both. Types will guarantee visibility
+    // and access only upon the appropriate one of the two possibilities.
+    //
+    // NB the function needs to come first.
+    return Object.assign(nonNullary, nullary) // eslint-disable-line functional/immutable-data
   }
 
 type Constructors<A extends AnyMember> = {
-  readonly [V in A as Tag<V>]: Constructor<A, Value<V>>
+  readonly // eslint-disable-next-line functional/prefer-readonly-type
+  [V in A as Tag<V>]: Constructor<A, Tag<V>>
 }
 
 // eslint-disable-next-line functional/functional-parameters
 const mkConstructors = <A extends AnyMember>(): Constructors<A> =>
   new Proxy({} as Constructors<A>, {
-    get: (__: Constructors<A>, tag: Tag<A>) => mkConstructor()(tag),
+    get: (__: Constructors<A>, tag: Tag<A>) => mkConstructor<A>()(tag),
   })
 
 /**
@@ -125,8 +137,8 @@ const mkConstructors = <A extends AnyMember>(): Constructors<A> =>
  *   [_]: () => 'no sun',
  * })
  *
- * assert.strictEqual(getSun(Weather.mk.Sun()), 'sun')
- * assert.strictEqual(getSun(Weather.mk.Clouds()), 'no sun')
+ * assert.strictEqual(getSun(Weather.mk.Sun), 'sun')
+ * assert.strictEqual(getSun(Weather.mk.Clouds), 'no sun')
  *
  * @since 0.1.0
  */

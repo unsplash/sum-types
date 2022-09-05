@@ -156,8 +156,8 @@ const getSun = Weather.match({
   [_]: () => 'no sun',
 })
 
-assert.strictEqual(getSun(Weather.mk.Sun()), 'sun')
-assert.strictEqual(getSun(Weather.mk.Clouds()), 'no sun')
+assert.strictEqual(getSun(Weather.mk.Sun), 'sun')
+assert.strictEqual(getSun(Weather.mk.Clouds), 'no sun')
 ```
 
 Added in v0.1.0
