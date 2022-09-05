@@ -2,6 +2,10 @@
 
 This project adheres to semantic versioning.
 
+## 0.3.0 (2022-09-05)
+
+Nullary constructors are no longer function calls, fixing an edge case unsafety. Where you previously called `mk.Member()`, now simply refer to `mk.Member`.
+
 ## 0.2.2 (2022-02-22)
 
 Add ESM support.
