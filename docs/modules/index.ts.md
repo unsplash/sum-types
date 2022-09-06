@@ -27,7 +27,7 @@ const getRainfall = match({
 
 const todayWeather = Rain(5)
 
-getRainfall(todayWeather) // '5mm'
+getRainfall(todayWeather) // "5mm"
 ```
 
 Added in v0.1.0
@@ -108,7 +108,7 @@ export interface Sum<A extends AnyMember> {
    * @example
    * match({
    *   Rain: (n) => `It's rained ${n} today!`,
-   *   [_]: () => 'Nice weather today.',
+   *   [_]: () => "Nice weather today.",
    * })
    *
    * @since 0.1.0
@@ -122,7 +122,7 @@ export interface Sum<A extends AnyMember> {
    * @example
    * matchW({
    *   Sun: () => 123,
-   *   [_]: () => 'the return types can be different',
+   *   [_]: () => "the return types can be different",
    * })
    *
    * @since 0.1.0

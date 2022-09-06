@@ -2,22 +2,22 @@
  * The library's only entrypoint. Get started with `Member` and `create`.
  *
  * @example
- * import { Member, create } from '@unsplash/sum-types'
+ * import { Member, create } from "@unsplash/sum-types"
  *
  * type Weather
- *   = Member<'Sun'>
- *   | Member<'Rain', number>
+ *   = Member<"Sun">
+ *   | Member<"Rain", number>
  *
  * const { mk: { Sun, Rain }, match } = create<Weather>()
  *
  * const getRainfall = match({
  *   Rain: n => `${n}mm`,
- *   Sun: () => 'none',
+ *   Sun: () => "none",
  * })
  *
  * const todayWeather = Rain(5)
  *
- * getRainfall(todayWeather) // '5mm'
+ * getRainfall(todayWeather) // "5mm"
  *
  * @since 0.1.0
  */
@@ -45,7 +45,7 @@ type ValueKey = typeof valueKey
  * members.
  *
  * @example
- * import { Member } from '@unsplash/sum-types'
+ * import { Member } from "@unsplash/sum-types"
  *
  * type Weather
  *   = Member<"Sun">
@@ -121,24 +121,24 @@ const mkConstructors = <A extends AnyMember>(): Constructors<A> =>
  * Symbol for declaring a wildcard case in a {@link match} expression.
  *
  * @example
- * import { Member, create, _ } from '@unsplash/sum-types'
+ * import { Member, create, _ } from "@unsplash/sum-types"
  *
  * type Weather
- *   = Member<'Sun'>
- *   | Member<'Rain', number>
- *   | Member<'Clouds'>
- *   | Member<'Overcast', string>
+ *   = Member<"Sun">
+ *   | Member<"Rain", number>
+ *   | Member<"Clouds">
+ *   | Member<"Overcast", string>
  *
  * const Weather = create<Weather>()
  *
  * const getSun = Weather.match({
- *   Sun: () => 'sun',
- *   Overcast: () => 'partial sun',
- *   [_]: () => 'no sun',
+ *   Sun: () => "sun",
+ *   Overcast: () => "partial sun",
+ *   [_]: () => "no sun",
  * })
  *
- * assert.strictEqual(getSun(Weather.mk.Sun), 'sun')
- * assert.strictEqual(getSun(Weather.mk.Clouds), 'no sun')
+ * assert.strictEqual(getSun(Weather.mk.Sun), "sun")
+ * assert.strictEqual(getSun(Weather.mk.Clouds), "no sun")
  *
  * @since 0.1.0
  */
@@ -224,7 +224,7 @@ export interface Sum<A extends AnyMember> {
    * @example
    * match({
    *   Rain: (n) => `It's rained ${n} today!`,
-   *   [_]: () => 'Nice weather today.',
+   *   [_]: () => "Nice weather today.",
    * })
    *
    * @since 0.1.0
@@ -238,7 +238,7 @@ export interface Sum<A extends AnyMember> {
    * @example
    * matchW({
    *   Sun: () => 123,
-   *   [_]: () => 'the return types can be different',
+   *   [_]: () => "the return types can be different",
    * })
    *
    * @since 0.1.0
@@ -251,11 +251,11 @@ export interface Sum<A extends AnyMember> {
  * sum type.
  *
  * @example
- * import { Member, create } from '@unsplash/sum-types'
+ * import { Member, create } from "@unsplash/sum-types"
  *
  * type Weather
- *   = Member<'Sun'>
- *   | Member<'Rain', number>
+ *   = Member<"Sun">
+ *   | Member<"Rain", number>
  *
  * // Depending upon your preferences you may prefer to destructure the
  * // returned object or effectively namespace it:

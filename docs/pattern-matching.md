@@ -7,7 +7,7 @@ nav_order: 2
 
 Pattern matching is exposed via the `match` method returned by `create`. This function is monomorphic to the sum type that's been created; this bypasses some type unsafety we observed with a polymorphic solution. It's curried out of the box.
 
-Two forms of pattern matching are supported by the same function, exhaustive and wildcard.
+Two forms of pattern matching are supported by the same function, exhaustive and wildcard. Pattern matching is always _total_, requiring an output for every possible input, making it fully typesafe.
 
 ## Exhaustive
 
@@ -34,5 +34,16 @@ MySum.match({
   // whilst it's idiomatic to place the wildcard at the end, its position does
   // not matter.
   [_]: h,
+})
+```
+
+## Branch widening
+
+In addition to `match` there's also `matchW`. The "W" denotes widening, [as in fp-ts](https://gcanti.github.io/fp-ts/guides/code-conventions.html#what-a-w-suffix-means-eg-chainw-or-chaineitherkw). Where `match` requires the same output type on all branches, `matchW` tolerates differences and unionises them instead. This can be useful when outputting to a union type such as `ReactNode`.
+
+```ts
+MySum.matchW({
+  X: () => 'foo',
+  Y: () => 123,
 })
 ```
