@@ -36,3 +36,14 @@ MySum.match({
   [_]: h,
 })
 ```
+
+## Branch widening
+
+In addition to `match` there's also `matchW`. The "W" denotes widening, [as in fp-ts](https://gcanti.github.io/fp-ts/guides/code-conventions.html#what-a-w-suffix-means-eg-chainw-or-chaineitherkw). Where `match` requires the same output type on all branches, `matchW` tolerates differences and unionises them instead. This can be useful when outputting to a union type such as `ReactNode`.
+
+```ts
+MySum.matchW({
+  X: () => 'foo',
+  Y: () => 123,
+})
+```
