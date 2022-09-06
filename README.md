@@ -4,24 +4,18 @@ Safe, ergonomic, non-generic sum types in TypeScript.
 
 Documentation: [unsplash.github.io/sum-types](https://unsplash.github.io/sum-types/)
 
-Example:
-
 ```ts
-import { Member, create } from "@unsplash/sum-types"
+import * as Sum from "@unsplash/sum-types"
 
-type Weather = Member<"Sun"> | Member<"Rain", number>
+type Weather = Sum.Member<"Sun"> | Sum.Member<"Rain", number>
+const Weather = Sum.create<Weather>()
 
-const {
-  mk: { Sun, Rain },
-  match,
-} = create<Weather>()
-
-const getRainfall = match({
+const getRainfall = Weather.match({
   Rain: n => `${n}mm`,
   Sun: () => "none",
 })
 
-const todayWeather = Rain(5)
+const todayWeather = Weather.mk.Rain(5)
 
 getRainfall(todayWeather) // '5mm'
 ```
