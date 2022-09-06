@@ -7,7 +7,7 @@ nav_order: 2
 
 Pattern matching is exposed via the `match` method returned by `create`. This function is monomorphic to the sum type that's been created; this bypasses some type unsafety we observed with a polymorphic solution. It's curried out of the box.
 
-Two forms of pattern matching are supported by the same function, exhaustive and wildcard.
+Two forms of pattern matching are supported by the same function, exhaustive and wildcard. Pattern matching is always _total_, requiring an output for every possible input, making it fully typesafe.
 
 ## Exhaustive
 
