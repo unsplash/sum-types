@@ -175,11 +175,17 @@ type ReturnTypes<
   A extends Record<any, (...xs: ReadonlyArray<any>) => unknown>,
 > = ReturnType<A[keyof A]>
 
-type MatchW<A extends AnyMember> = <B extends Cases<A, unknown>>(
+/**
+ * @internal
+ */
+export type MatchW<A extends AnyMember> = <B extends Cases<A, unknown>>(
   fs: B,
 ) => (x: A) => ReturnTypes<B>
 
-type Match<A extends AnyMember> = <B>(fs: Cases<A, B>) => (x: A) => B
+/**
+ * @internal
+ */
+export type Match<A extends AnyMember> = <B>(fs: Cases<A, B>) => (x: A) => B
 
 const mkMatchW =
   <A extends AnyMember>(): MatchW<A> => // eslint-disable-line functional/functional-parameters
