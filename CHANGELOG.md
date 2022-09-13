@@ -2,6 +2,10 @@
 
 This project adheres to semantic versioning.
 
+## 0.3.1 (2022-09-13)
+
+Exports the types `Match` and `MatchW` to workaround type errors that appear when compiling with the `declaration` compiler option enabled.
+
 ## 0.3.0 (2022-09-05)
 
 Nullary constructors are no longer function calls, fixing an edge case unsafety. Where you previously called `mk.Member()`, now simply refer to `mk.Member`.
