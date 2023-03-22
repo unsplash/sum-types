@@ -5,6 +5,21 @@ import fc from "fast-check"
 
 describe("index", () => {
   describe("create", () => {
+    describe("constructors", () => {
+      it("are reference-equal", () => {
+        type Weather = Member<"Sun"> | Member<"Rain", number> | Member<"Snow">
+        const Weather = create<Weather>()
+
+        expect(Weather.mk.Sun).toEqual(Weather.mk.Sun)
+        expect(Weather.mk.Sun).not.toEqual(Weather.mk.Snow)
+        expect(Weather.mk.Sun).not.toEqual(Weather.mk.Rain)
+        expect(Weather.mk.Rain).toEqual(Weather.mk.Rain)
+
+        expect({ foo: Weather.mk.Sun }).toEqual({ foo: Weather.mk.Sun })
+        expect({ foo: Weather.mk.Sun }).not.toEqual({ foo: Weather.mk.Snow })
+      })
+    })
+
     describe("pattern match function", () => {
       it("can pattern match", () => {
         type Weather =

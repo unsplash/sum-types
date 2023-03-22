@@ -112,10 +112,25 @@ type Constructors<A extends AnyMember> = {
 }
 
 // eslint-disable-next-line functional/functional-parameters
-const mkConstructors = <A extends AnyMember>(): Constructors<A> =>
-  new Proxy({} as Constructors<A>, {
-    get: (__: Constructors<A>, tag: Tag<A>) => mkConstructor<A>()(tag),
+const mkConstructors = <A extends AnyMember>(): Constructors<A> => {
+  // Reuse constructors to preserve referential equality. This improves interop
+  // with the likes of Jest.
+  const xs = new Map<Tag<A>, Constructor<A, Tag<A>>>()
+
+  return new Proxy({} as Constructors<A>, {
+    get: (__: Constructors<A>, tag: Tag<A>) => {
+      const f = xs.get(tag)
+      // eslint-disable-next-line functional/no-conditional-statement
+      if (f !== undefined) return f
+
+      const g = mkConstructor<A>()(tag)
+      // eslint-disable-next-line functional/no-expression-statement
+      xs.set(tag, g)
+
+      return g
+    },
   })
+}
 
 /**
  * Symbol for declaring a wildcard case in a {@link match} expression.
