@@ -20,6 +20,18 @@ describe("index", () => {
       })
     })
 
+    describe("members", () => {
+      it("are value-equal", () => {
+        type Weather = Member<"Sun"> | Member<"Rain", number>
+        const Weather = create<Weather>()
+
+        expect(Weather.mk.Sun).toEqual(Weather.mk.Sun)
+        expect(Weather.mk.Sun).not.toEqual(Weather.mk.Rain(123))
+        expect(Weather.mk.Rain(123)).toEqual(Weather.mk.Rain(123))
+        expect(Weather.mk.Rain(123)).not.toEqual(Weather.mk.Rain(456))
+      })
+    })
+
     describe("pattern match function", () => {
       it("can pattern match", () => {
         type Weather =
