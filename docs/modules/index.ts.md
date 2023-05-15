@@ -164,8 +164,8 @@ Added in v0.1.0
 
 ## create
 
-Create runtime constructors and a pattern matching function for a given
-sum type.
+Create runtime constructors and pattern matching functions for a given sum
+type.
 
 **Signature**
 

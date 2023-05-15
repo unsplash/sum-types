@@ -268,8 +268,8 @@ export interface Sum<A extends AnyMember> {
 }
 
 /**
- * Create runtime constructors and a pattern matching function for a given
- * sum type.
+ * Create runtime constructors and pattern matching functions for a given sum
+ * type.
  *
  * @example
  * import { Member, create } from "@unsplash/sum-types"
