@@ -224,7 +224,7 @@ const mkMatch =
   <A extends AnyMember>(): Match<A> => // eslint-disable-line functional/functional-parameters
   <B>(fs: Cases<A, B>) =>
   (x: A): B =>
-    mkMatchW<A>()<Cases<A, B>>(fs)(x) as B
+    mkMatchW<A>()(fs)(x) as B
 
 /**
  * The output of `create`, providing constructors and pattern matching.
