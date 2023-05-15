@@ -357,6 +357,12 @@ export const deserialize =
  *
  * @since 0.4.0
  */
+// This needs to be thunked because:
+//   1. We want to enforce that `A` is provided, which to do with multiple type
+//      arguments would require `= never`.
+//   2. We want `B` to be inferred from the argument, which necessitates not
+//      being provided a default type (`=`). However, it would have to have a
+//      default type in order to follow `A`, which would itself have one.
 export const is =
   <A extends AnyMember>() => // eslint-disable-line functional/functional-parameters
   <B extends Tag<A>>(k: B) =>
