@@ -335,3 +335,44 @@ export const deserialize =
   <A extends AnyMember>() => // eslint-disable-line functional/functional-parameters
   (x: Serialized<A>): A =>
     ({ [tagKey]: x[0], [valueKey]: x[1] } as unknown as A)
+
+/**
+ * Refine a foreign value to a sum type member given its key and a refinement to
+ * its value.
+ *
+ * This is a low-level primitive. Instead consider `@unsplash/sum-types-io-ts`.
+ *
+ * @example
+ * import { Member, create, is } from "@unsplash/sum-types"
+ *
+ * type Weather
+ *   = Member<"Sun">
+ *   | Member<"Rain", number>
+ * const Weather = create<Weather>()
+ *
+ * assert.strictEqual(
+ *   is<Weather>()("Rain")((x): x is number => typeof x === 'number')(Weather.mk.Rain(123)),
+ *   true,
+ * )
+ *
+ * @since 0.4.0
+ */
+export const is =
+  <A extends AnyMember>() => // eslint-disable-line functional/functional-parameters
+  <B extends Tag<A>>(k: B) =>
+  (f: (mv: unknown) => mv is ValueByTag<A, B>) =>
+  (x: unknown): x is A => {
+    // eslint-disable-next-line functional/no-conditional-statement
+    if (x === null || !["object", "function"].includes(typeof x)) return false
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const xx: any = x
+
+    // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-member-access
+    if (!(tagKey in xx) || xx[tagKey] !== k) return false
+
+    // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-member-access
+    if (!(valueKey in xx) || !f(xx[valueKey])) return false
+
+    return true
+  }
