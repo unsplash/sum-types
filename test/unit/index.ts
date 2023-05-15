@@ -66,13 +66,25 @@ describe("index", () => {
 
     it("are reversible", () => {
       type Sum = Member<string, number>
+      const Sum = create<Sum>()
 
       fc.assert(
         fc.property(fc.string(), fc.integer(), (k, v) => {
           const x = create<Sum>().mk[k](v)
-          expect(deserialize<Sum>()(serialize(x))).toEqual(x)
+          expect(deserialize(Sum)(serialize(x))).toEqual(x)
         }),
       )
+    })
+
+    it("deserializations are reference-equal", () => {
+      type Weather = Member<"Sun"> | Member<"Rain", 123>
+      const Weather = create<Weather>()
+
+      const sun = Weather.mk.Sun
+      expect(deserialize(Weather)(serialize(sun))).toEqual(sun)
+
+      const rain = Weather.mk.Rain(123)
+      expect(deserialize(Weather)(serialize(rain))).toEqual(rain)
     })
   })
 })
