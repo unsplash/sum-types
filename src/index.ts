@@ -66,6 +66,10 @@ export type AnyMember = Member<string, unknown>
 type Tag<A extends AnyMember> = A[TagKey]
 type Value<A extends AnyMember> = A[ValueKey]
 
+type ValueByTag<A extends AnyMember, K extends Tag<A>> = Value<
+  Extract<A, Member<K, unknown>>
+>
+
 /**
  * A constructor is either `A -> B` or, if it's nullary, directly `B`.
  *
@@ -78,7 +82,7 @@ type Value<A extends AnyMember> = A[ValueKey]
 export type Constructor<
   A extends AnyMember,
   K extends Tag<A>,
-  V = Value<Extract<A, Member<K, unknown>>>,
+  V = ValueByTag<A, K>,
   // eslint-disable-next-line functional/prefer-readonly-type
 > = [V] extends [null] ? A : (x: V) => A
 
