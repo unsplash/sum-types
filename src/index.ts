@@ -166,6 +166,10 @@ type CasesExhaustive<A extends AnyMember, B> = {
   readonly [V in A as Tag<V>]: (val: Value<V>) => B
 }
 
+type CasesXExhaustive<A extends AnyMember, B> = {
+  readonly [V in A as Tag<V>]: B
+}
+
 /**
  * Enables a {@link match} expression to cover only some cases provided a
  * wildcard case is declared with which to match the remaining cases.
@@ -178,12 +182,22 @@ type CasesWildcard<A extends AnyMember, B> = {
   readonly [_]: () => B
 }
 
+type CasesXWildcard<A extends AnyMember, B> = {
+  readonly [K in keyof CasesXExhaustive<A, B>]?: CasesXExhaustive<A, B>[K]
+} & {
+  readonly [_]: B
+}
+
 /**
  * Ensures that a {@link match} expression either covers all cases or contains
  * a wildcard for matching the remaining cases.
  */
 // The order of this union impacts exhaustive error reporting.
 type Cases<A extends AnyMember, B> = CasesWildcard<A, B> | CasesExhaustive<A, B>
+
+type CasesX<A extends AnyMember, B> =
+  | CasesXWildcard<A, B>
+  | CasesXExhaustive<A, B>
 
 type ReturnTypes<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -200,7 +214,19 @@ export type MatchW<A extends AnyMember> = <B extends Cases<A, unknown>>(
 /**
  * @internal
  */
+export type MatchXW<A extends AnyMember> = <B extends CasesX<A, unknown>>(
+  fs: B,
+) => (x: A) => B[keyof B]
+
+/**
+ * @internal
+ */
 export type Match<A extends AnyMember> = <B>(fs: Cases<A, B>) => (x: A) => B
+
+/**
+ * @internal
+ */
+export type MatchX<A extends AnyMember> = <B>(fs: CasesX<A, B>) => (x: A) => B
 
 const mkMatchW =
   <A extends AnyMember>(): MatchW<A> => // eslint-disable-line functional/functional-parameters
@@ -220,11 +246,35 @@ const mkMatchW =
     throw new Error(`Failed to pattern match against tag "${tag}".`)
   }
 
+const mkMatchXW =
+  <A extends AnyMember>(): MatchXW<A> => // eslint-disable-line functional/functional-parameters
+  <B extends CasesX<A, unknown>>(fs: B) =>
+  <C extends B[keyof B]>(x: A): C => {
+    const tag = x[tagKey] as Tag<A>
+
+    const g = fs[tag]
+    // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-return
+    if (g !== undefined) return g as C
+
+    const h = (fs as CasesXWildcard<A, B>)[_]
+    // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-return
+    if (h !== undefined) return h as C
+
+    // eslint-disable-next-line functional/no-throw-statement
+    throw new Error(`Failed to pattern match against tag "${tag}".`)
+  }
+
 const mkMatch =
   <A extends AnyMember>(): Match<A> => // eslint-disable-line functional/functional-parameters
   <B>(fs: Cases<A, B>) =>
   (x: A): B =>
-    mkMatchW<A>()<Cases<A, B>>(fs)(x) as B
+    mkMatchW<A>()(fs)(x) as B
+
+const mkMatchX =
+  <A extends AnyMember>(): MatchX<A> => // eslint-disable-line functional/functional-parameters
+  <B>(fs: CasesX<A, B>) =>
+  (x: A): B =>
+    mkMatchXW<A>()(fs)(x) as B
 
 /**
  * The output of `create`, providing constructors and pattern matching.
@@ -265,11 +315,40 @@ export interface Sum<A extends AnyMember> {
    * @since 0.1.0
    */
   readonly matchW: MatchW<A>
+  /**
+   * Pattern match against each member of a sum type strictly, hence the "X"
+   * suffix ("strict"). All members must exhaustively be covered unless a
+   * wildcard (@link \_) is present.
+   *
+   * @example
+   * matchX({
+   *   Sun: 123,
+   *   [_]: 456,
+   * })
+   *
+   * @since 0.4.0
+   */
+  readonly matchX: MatchX<A>
+  /**
+   * Pattern match against each member of a sum type strictly, hence the "X"
+   * suffix ("strict"). All members must exhaustively be covered unless a
+   * wildcard (@link \_) is present. Unionises the return types of the branches,
+   * hence the "W" suffix ("widen").
+   *
+   * @example
+   * matchXW({
+   *   Sun: 123,
+   *   [_]: "the return types can be different",
+   * })
+   *
+   * @since 0.4.0
+   */
+  readonly matchXW: MatchXW<A>
 }
 
 /**
- * Create runtime constructors and a pattern matching function for a given
- * sum type.
+ * Create runtime constructors and pattern matching functions for a given sum
+ * type.
  *
  * @example
  * import { Member, create } from "@unsplash/sum-types"
@@ -290,6 +369,8 @@ export const create = <A extends AnyMember>(): Sum<A> => ({
   mk: mkConstructors<A>(),
   match: mkMatch<A>(),
   matchW: mkMatchW<A>(),
+  matchX: mkMatchX<A>(),
+  matchXW: mkMatchXW<A>(),
 })
 
 /**

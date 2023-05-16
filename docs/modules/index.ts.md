@@ -128,6 +128,35 @@ export interface Sum<A extends AnyMember> {
    * @since 0.1.0
    */
   readonly matchW: MatchW<A>
+  /**
+   * Pattern match against each member of a sum type strictly, hence the "X"
+   * suffix ("strict"). All members must exhaustively be covered unless a
+   * wildcard (@link \_) is present.
+   *
+   * @example
+   * matchX({
+   *   Sun: 123,
+   *   [_]: 456,
+   * })
+   *
+   * @since 0.4.0
+   */
+  readonly matchX: MatchX<A>
+  /**
+   * Pattern match against each member of a sum type strictly, hence the "X"
+   * suffix ("strict"). All members must exhaustively be covered unless a
+   * wildcard (@link \_) is present. Unionises the return types of the branches,
+   * hence the "W" suffix ("widen").
+   *
+   * @example
+   * matchXW({
+   *   Sun: 123,
+   *   [_]: "the return types can be different",
+   * })
+   *
+   * @since 0.4.0
+   */
+  readonly matchXW: MatchXW<A>
 }
 ```
 
@@ -164,8 +193,8 @@ Added in v0.1.0
 
 ## create
 
-Create runtime constructors and a pattern matching function for a given
-sum type.
+Create runtime constructors and pattern matching functions for a given sum
+type.
 
 **Signature**
 
