@@ -2,6 +2,14 @@
 
 This project adheres to semantic versioning.
 
+## 0.4.0 (2023-05-16)
+
+Adds supports for convenient "strict" pattern matching without access to member values, denoted by an "X" suffix.
+
+Adds a first-class, low-level `is` primitive for refining foreign data to a known sum member.
+
+Fixes reference equality of deserialized nullary sums.
+
 ## 0.3.2 (2023-03-23)
 
 Fixes nullary equality checks in Jest and others that compare the reference equality of functions.
