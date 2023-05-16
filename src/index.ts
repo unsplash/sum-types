@@ -256,9 +256,9 @@ const mkMatchXW =
     // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-return
     if (g !== undefined) return g as C
 
-    const h = (fs as CasesWildcard<A, B>)[_]
+    const h = (fs as CasesXWildcard<A, B>)[_]
     // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-return
-    if (h !== undefined) return h() as C
+    if (h !== undefined) return h as C
 
     // eslint-disable-next-line functional/no-throw-statement
     throw new Error(`Failed to pattern match against tag "${tag}".`)
