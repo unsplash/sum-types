@@ -321,13 +321,14 @@ export const serialize = <A extends AnyMember>(x: A): Serialized<A> =>
  *
  * @since 0.1.0
  */
-// This needs to be thunked because:
-//   1. We want to enforce that `A` is provided, which to do with multiple type
-//      arguments would require `= never`.
-//   2. We want `K` to be inferred from the argument, which necessitates not
-//      being provided a default type (`=`). However, it would have to have a
-//      default type in order to follow `A`, which would itself have one.
 export const deserialize =
-  <A extends AnyMember>() => // eslint-disable-line functional/functional-parameters
-  (x: Serialized<A>): A =>
-    ({ [tagKey]: x[0], [valueKey]: x[1] } as unknown as A)
+  <A extends AnyMember>(x: Sum<A>) =>
+  (y: Serialized<A>): A => {
+    const k: Tag<A> = y[0]
+    const v: Value<A> = y[1]
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore This is unit tested.
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return v === null ? x.mk[k] : x.mk[k](v)
+  }
