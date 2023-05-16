@@ -1,6 +1,6 @@
 /* eslint-disable functional/functional-parameters */
 
-import { create, _, serialize, deserialize, Member } from "../../src/index"
+import { create, _, is, serialize, deserialize, Member } from "../../src/index"
 import fc from "fast-check"
 
 describe("index", () => {
@@ -131,6 +131,73 @@ describe("index", () => {
 
       const rain = Weather.mk.Rain(123)
       expect(deserialize(Weather)(serialize(rain))).toEqual(rain)
+    })
+  })
+
+  describe("is", () => {
+    type T =
+      | Member<"Foo">
+      | Member<"Bar", string>
+      | Member<"Baz", ReadonlyArray<number>>
+    const T = create<T>()
+    const f = is<T>()
+
+    it("parses according to provided refinement", () => {
+      expect(f("Foo")((x): x is null => x === null)(T.mk.Foo)).toBe(true)
+
+      expect(
+        f("Bar")((x): x is string => typeof x === "string")(T.mk.Bar("ciao")),
+      ).toBe(true)
+
+      expect(
+        f("Baz")(
+          (x): x is ReadonlyArray<number> =>
+            Array.isArray(x) && x.every(y => typeof y === "number"),
+        )(T.mk.Baz([1, 2, 3])),
+      ).toBe(true)
+    })
+
+    it("fails if refinement fails", () => {
+      expect(f("Foo")((x): x is null => false)(T.mk.Foo)).toBe(false)
+    })
+
+    it("fails bad input key", () => {
+      expect(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        f("Food" as any)((x): x is null => x === null)(T.mk.Foo),
+      ).toBe(false)
+    })
+
+    it("fails wholly bad data", () => {
+      const g = f("Foo")((x): x is null => x === null)
+
+      expect(g(undefined)).toBe(false)
+      expect(g(null)).toBe(false)
+      expect(g("Foo")).toBe(false)
+      expect(g(["Foo", null])).toBe(false)
+      expect(g({ Foo: "Foo" })).toBe(false)
+    })
+
+    it("fails bad parsed key", () => {
+      type U = Member<"NotFoo">
+      const U = create<U>()
+
+      expect(f("Foo")((x): x is null => x === null)(U.mk.NotFoo)).toBe(false)
+    })
+
+    it("fails bad parsed value", () => {
+      type U = Member<"Foo", string>
+      const U = create<U>()
+
+      expect(f("Foo")((x): x is null => x === null)(U.mk.Foo("not null"))).toBe(
+        false,
+      )
+    })
+
+    it("tolerates excess properties", () => {
+      expect(
+        f("Foo")((x): x is null => x === null)({ ...T.mk.Foo, excess: true }),
+      ).toBe(true)
     })
   })
 })

@@ -66,6 +66,10 @@ export type AnyMember = Member<string, unknown>
 type Tag<A extends AnyMember> = A[TagKey]
 type Value<A extends AnyMember> = A[ValueKey]
 
+type ValueByTag<A extends AnyMember, K extends Tag<A>> = Value<
+  Extract<A, Member<K, unknown>>
+>
+
 /**
  * A constructor is either `A -> B` or, if it's nullary, directly `B`.
  *
@@ -78,7 +82,7 @@ type Value<A extends AnyMember> = A[ValueKey]
 export type Constructor<
   A extends AnyMember,
   K extends Tag<A>,
-  V = Value<Extract<A, Member<K, unknown>>>,
+  V = ValueByTag<A, K>,
   // eslint-disable-next-line functional/prefer-readonly-type
 > = [V] extends [null] ? A : (x: V) => A
 
@@ -412,4 +416,51 @@ export const deserialize =
     // @ts-ignore This is unit tested.
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return v === null ? x.mk[k] : x.mk[k](v)
+  }
+
+/**
+ * Refine a foreign value to a sum type member given its key and a refinement to
+ * its value.
+ *
+ * This is a low-level primitive. Instead consider `@unsplash/sum-types-io-ts`.
+ *
+ * @example
+ * import { Member, create, is } from "@unsplash/sum-types"
+ *
+ * type Weather
+ *   = Member<"Sun">
+ *   | Member<"Rain", number>
+ * const Weather = create<Weather>()
+ *
+ * assert.strictEqual(
+ *   is<Weather>()("Rain")((x): x is number => typeof x === 'number')(Weather.mk.Rain(123)),
+ *   true,
+ * )
+ *
+ * @since 0.4.0
+ */
+// This needs to be thunked because:
+//   1. We want to enforce that `A` is provided, which to do with multiple type
+//      arguments would require `= never`.
+//   2. We want `B` to be inferred from the argument, which necessitates not
+//      being provided a default type (`=`). However, it would have to have a
+//      default type in order to follow `A`, which would itself have one.
+export const is =
+  <A extends AnyMember>() => // eslint-disable-line functional/functional-parameters
+  <B extends Tag<A>>(k: B) =>
+  (f: (mv: unknown) => mv is ValueByTag<A, B>) =>
+  (x: unknown): x is A => {
+    // eslint-disable-next-line functional/no-conditional-statement
+    if (x === null || !["object", "function"].includes(typeof x)) return false
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const xx: any = x
+
+    // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-member-access
+    if (!(tagKey in xx) || xx[tagKey] !== k) return false
+
+    // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-member-access
+    if (!(valueKey in xx) || !f(xx[valueKey])) return false
+
+    return true
   }

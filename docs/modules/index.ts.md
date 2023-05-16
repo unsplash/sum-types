@@ -43,6 +43,7 @@ Added in v0.1.0
   - [\_](#_)
   - [create](#create)
   - [deserialize](#deserialize)
+  - [is](#is)
   - [serialize](#serialize)
 
 ---
@@ -233,6 +234,34 @@ export declare const deserialize: <A extends AnyMember>(x: Sum<A>) => (y: Serial
 ```
 
 Added in v0.1.0
+
+## is
+
+Refine a foreign value to a sum type member given its key and a refinement to
+its value.
+
+This is a low-level primitive. Instead consider `@unsplash/sum-types-io-ts`.
+
+**Signature**
+
+```ts
+export declare const is: <A extends AnyMember>() => <B extends Tag<A>>(
+  k: B
+) => (f: (mv: unknown) => mv is Value<Extract<A, Member<B, unknown>>>) => (x: unknown) => x is A
+```
+
+**Example**
+
+```ts
+import { Member, create, is } from '@unsplash/sum-types'
+
+type Weather = Member<'Sun'> | Member<'Rain', number>
+const Weather = create<Weather>()
+
+assert.strictEqual(is<Weather>()('Rain')((x): x is number => typeof x === 'number')(Weather.mk.Rain(123)), true)
+```
+
+Added in v0.4.0
 
 ## serialize
 
