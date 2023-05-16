@@ -32,13 +32,14 @@ describe("index", () => {
       })
     })
 
-    describe("pattern match function", () => {
-      it("can pattern match", () => {
-        type Weather =
-          | Member<"Rain", number>
-          | Member<"Sun">
-          | Member<"Overcast", string>
-        const Weather = create<Weather>()
+    describe("supports pattern matching via", () => {
+      type Weather =
+        | Member<"Rain", number>
+        | Member<"Sun">
+        | Member<"Overcast", string>
+      const Weather = create<Weather>()
+
+      it("match", () => {
         const f = Weather.match({
           Rain: n => `${n}mm`,
           [_]: () => "not rain",
@@ -51,6 +52,51 @@ describe("index", () => {
         )
 
         expect(f(Weather.mk.Sun)).toBe("not rain")
+      })
+
+      it("matchW", () => {
+        const f = Weather.matchW({
+          Rain: n => `${n}mm`,
+          [_]: () => null,
+        })
+
+        fc.assert(
+          fc.property(fc.integer(), n =>
+            expect(f(Weather.mk.Rain(n))).toBe(`${n}mm`),
+          ),
+        )
+
+        expect(f(Weather.mk.Sun)).toBeNull()
+      })
+
+      it("matchX", () => {
+        const f = Weather.matchX({
+          Rain: "rained",
+          [_]: "didn't rain",
+        })
+
+        fc.assert(
+          fc.property(fc.integer(), n =>
+            expect(f(Weather.mk.Rain(n))).toBe("rained"),
+          ),
+        )
+
+        expect(f(Weather.mk.Sun)).toBe("didn't rain")
+      })
+
+      it("matchXW", () => {
+        const f = Weather.matchXW({
+          Rain: "rained",
+          [_]: null,
+        })
+
+        fc.assert(
+          fc.property(fc.integer(), n =>
+            expect(f(Weather.mk.Rain(n))).toBe("rained"),
+          ),
+        )
+
+        expect(f(Weather.mk.Sun)).toBeNull()
       })
     })
   })
