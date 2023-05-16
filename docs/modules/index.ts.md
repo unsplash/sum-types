@@ -201,7 +201,7 @@ structure. Reversible by `serialize`.
 **Signature**
 
 ```ts
-export declare const deserialize: <A extends AnyMember>() => (x: Serialized<A>) => A
+export declare const deserialize: <A extends AnyMember>(x: Sum<A>) => (y: Serialized<A>) => A
 ```
 
 Added in v0.1.0
