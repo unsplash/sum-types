@@ -84,6 +84,19 @@ describe("index", () => {
         expect(f(Weather.mk.Sun)).toBe("didn't rain")
       })
 
+      it("matchX allow undefined value", () => {
+        type T = Member<"A"> | Member<"B">
+        const T = create<T>()
+
+        const f = T.matchX({
+          A: undefined,
+          [_]: undefined,
+        })
+
+        expect(f(T.mk.A)).toBe(undefined)
+        expect(f(T.mk.B)).toBe(undefined)
+      })
+
       it("matchXW", () => {
         const f = Weather.matchXW({
           Rain: "rained",
