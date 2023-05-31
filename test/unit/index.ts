@@ -99,18 +99,18 @@ describe("index", () => {
         expect(f(Weather.mk.Sun)).toBeNull()
       })
 
-      it('matchXW allow undefined value', () => {
-        type T = Member<'A'> | Member<'B'>
+      it("matchXW allow undefined value", () => {
+        type T = Member<"A"> | Member<"B">
         const T = create<T>()
 
         const f = T.matchXW({
           A: undefined,
-          [_]: undefined
-        });
+          [_]: undefined,
+        })
 
-        expect(f(T.mk.A)).toBe(undefined);
-        expect(f(T.mk.B)).toBe(undefined);
-      });
+        expect(f(T.mk.A)).toBe(undefined)
+        expect(f(T.mk.B)).toBe(undefined)
+      })
     })
   })
 
