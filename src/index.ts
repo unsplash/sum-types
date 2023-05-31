@@ -257,10 +257,11 @@ const mkMatchXW =
     const tag = x[tagKey] as Tag<A>
 
     // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-return
-    if (tag in fs) return fs[tag] as C
+    if (Object.prototype.hasOwnProperty.call(fs, tag)) return fs[tag] as C
 
     // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-return
-    if (_ in fs) return (fs as CasesXWildcard<A, B>)[_] as C
+    if (Object.prototype.hasOwnProperty.call(fs, _))
+      return (fs as CasesXWildcard<A, B>)[_] as C
 
     // eslint-disable-next-line functional/no-throw-statement
     throw new Error(`Failed to pattern match against tag "${tag}".`)
