@@ -256,13 +256,11 @@ const mkMatchXW =
   <C extends B[keyof B]>(x: A): C => {
     const tag = x[tagKey] as Tag<A>
 
-    const g = fs[tag]
     // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-return
-    if (g !== undefined) return g as C
+    if (tag in fs) return fs[tag] as C
 
-    const h = (fs as CasesXWildcard<A, B>)[_]
     // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-return
-    if (h !== undefined) return h as C
+    if (_ in fs) return (fs as CasesXWildcard<A, B>)[_] as C
 
     // eslint-disable-next-line functional/no-throw-statement
     throw new Error(`Failed to pattern match against tag "${tag}".`)
