@@ -85,7 +85,7 @@ describe("index", () => {
       })
 
       it("matchX allow undefined value", () => {
-        type T = Member<"A"> | Member<"B">
+        type T = Member<"A"> | Member<"B"> | Member<"toString">
         const T = create<T>()
 
         const f = T.matchX({
@@ -95,6 +95,9 @@ describe("index", () => {
 
         expect(f(T.mk.A)).toBe(undefined)
         expect(f(T.mk.B)).toBe(undefined)
+        // Check that `toString` does not match an object prototype function
+        // This check would fail when the `in` operator is used instead of `hasOwnProperty`.
+        expect(f(T.mk.toString)).toBe(undefined)
       })
 
       it("matchXW", () => {
@@ -113,7 +116,7 @@ describe("index", () => {
       })
 
       it("matchXW allow undefined value", () => {
-        type T = Member<"A"> | Member<"B">
+        type T = Member<"A"> | Member<"B"> | Member<"toString">
         const T = create<T>()
 
         const f = T.matchXW({
@@ -123,6 +126,9 @@ describe("index", () => {
 
         expect(f(T.mk.A)).toBe(undefined)
         expect(f(T.mk.B)).toBe(undefined)
+        // Check that `toString` does not match an object prototype function.
+        // This check would fail when the `in` operator is used instead of `hasOwnProperty`.
+        expect(f(T.mk.toString)).toBe(undefined)
       })
     })
   })
