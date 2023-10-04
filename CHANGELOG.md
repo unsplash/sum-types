@@ -2,6 +2,10 @@
 
 This project adheres to semantic versioning.
 
+## 0.4.1 (2023-10-04)
+
+Fixes pattern matching branches which return `undefined` in `matchX` and `matchXW`.
+
 ## 0.4.0 (2023-05-16)
 
 Adds supports for convenient "strict" pattern matching without access to member values, denoted by an "X" suffix.
