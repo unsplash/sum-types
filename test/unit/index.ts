@@ -15,8 +15,12 @@ describe("index", () => {
         expect(Weather.mk.Sun).not.toBe(Weather.mk.Rain)
         expect(Weather.mk.Rain).toBe(Weather.mk.Rain)
 
-        expect({ foo: Weather.mk.Sun }).toEqual({ foo: Weather.mk.Sun })
-        expect({ foo: Weather.mk.Sun }).not.toEqual({ foo: Weather.mk.Snow })
+        expect({ foo: Weather.mk.Sun(null) }).toEqual({
+          foo: Weather.mk.Sun(null),
+        })
+        expect({ foo: Weather.mk.Sun(null) }).not.toEqual({
+          foo: Weather.mk.Snow(null),
+        })
       })
     })
 
@@ -25,8 +29,8 @@ describe("index", () => {
         type Weather = Member<"Sun"> | Member<"Rain", number>
         const Weather = create<Weather>()
 
-        expect(Weather.mk.Sun).toEqual(Weather.mk.Sun)
-        expect(Weather.mk.Sun).not.toEqual(Weather.mk.Rain(123))
+        expect(Weather.mk.Sun(null)).toEqual(Weather.mk.Sun(null))
+        expect(Weather.mk.Sun(null)).not.toEqual(Weather.mk.Rain(123))
         expect(Weather.mk.Rain(123)).toEqual(Weather.mk.Rain(123))
         expect(Weather.mk.Rain(123)).not.toEqual(Weather.mk.Rain(456))
       })
@@ -51,7 +55,7 @@ describe("index", () => {
           ),
         )
 
-        expect(f(Weather.mk.Sun)).toBe("not rain")
+        expect(f(Weather.mk.Sun(null))).toBe("not rain")
       })
 
       it("matchW", () => {
@@ -66,7 +70,7 @@ describe("index", () => {
           ),
         )
 
-        expect(f(Weather.mk.Sun)).toBeNull()
+        expect(f(Weather.mk.Sun(null))).toBeNull()
       })
 
       it("matchX", () => {
@@ -81,7 +85,7 @@ describe("index", () => {
           ),
         )
 
-        expect(f(Weather.mk.Sun)).toBe("didn't rain")
+        expect(f(Weather.mk.Sun(null))).toBe("didn't rain")
       })
 
       it("matchX allow undefined value", () => {
@@ -93,11 +97,11 @@ describe("index", () => {
           [_]: undefined,
         })
 
-        expect(f(T.mk.A)).toBe(undefined)
-        expect(f(T.mk.B)).toBe(undefined)
+        expect(f(T.mk.A(null))).toBe(undefined)
+        expect(f(T.mk.B(null))).toBe(undefined)
         // Check that `toString` does not match an object prototype function
         // This check would fail when the `in` operator is used instead of `hasOwnProperty`.
-        expect(f(T.mk.toString)).toBe(undefined)
+        expect(f(T.mk.toString(null))).toBe(undefined)
       })
 
       it("matchXW", () => {
@@ -112,7 +116,7 @@ describe("index", () => {
           ),
         )
 
-        expect(f(Weather.mk.Sun)).toBeNull()
+        expect(f(Weather.mk.Sun(null))).toBeNull()
       })
 
       it("matchXW allow undefined value", () => {
@@ -124,11 +128,11 @@ describe("index", () => {
           [_]: undefined,
         })
 
-        expect(f(T.mk.A)).toBe(undefined)
-        expect(f(T.mk.B)).toBe(undefined)
+        expect(f(T.mk.A(null))).toBe(undefined)
+        expect(f(T.mk.B(null))).toBe(undefined)
         // Check that `toString` does not match an object prototype function.
         // This check would fail when the `in` operator is used instead of `hasOwnProperty`.
-        expect(f(T.mk.toString)).toBe(undefined)
+        expect(f(T.mk.toString(null))).toBe(undefined)
       })
     })
   })
@@ -138,7 +142,7 @@ describe("index", () => {
       type Sum = Member<"foo"> | Member<"bar", undefined>
       const Sum = create<Sum>()
 
-      expect(serialize(Sum.mk.foo)).toEqual(["foo", null])
+      expect(serialize(Sum.mk.foo(null))).toEqual(["foo", null])
       expect(serialize(Sum.mk.bar(undefined))).toEqual(["bar", undefined])
     })
 
@@ -158,7 +162,7 @@ describe("index", () => {
       type Weather = Member<"Sun"> | Member<"Rain", 123>
       const Weather = create<Weather>()
 
-      const sun = Weather.mk.Sun
+      const sun = Weather.mk.Sun(null)
       expect(deserialize(Weather)(serialize(sun))).toEqual(sun)
 
       const rain = Weather.mk.Rain(123)
@@ -175,7 +179,7 @@ describe("index", () => {
     const f = is<T>()
 
     it("parses according to provided refinement", () => {
-      expect(f("Foo")((x): x is null => x === null)(T.mk.Foo)).toBe(true)
+      expect(f("Foo")((x): x is null => x === null)(T.mk.Foo(null))).toBe(true)
 
       expect(
         f("Bar")((x): x is string => typeof x === "string")(T.mk.Bar("ciao")),
@@ -190,13 +194,13 @@ describe("index", () => {
     })
 
     it("fails if refinement fails", () => {
-      expect(f("Foo")((x): x is null => false)(T.mk.Foo)).toBe(false)
+      expect(f("Foo")((x): x is null => false)(T.mk.Foo(null))).toBe(false)
     })
 
     it("fails bad input key", () => {
       expect(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        f("Food" as any)((x): x is null => x === null)(T.mk.Foo),
+        f("Food" as any)((x): x is null => x === null)(T.mk.Foo(null)),
       ).toBe(false)
     })
 
@@ -214,7 +218,9 @@ describe("index", () => {
       type U = Member<"NotFoo">
       const U = create<U>()
 
-      expect(f("Foo")((x): x is null => x === null)(U.mk.NotFoo)).toBe(false)
+      expect(f("Foo")((x): x is null => x === null)(U.mk.NotFoo(null))).toBe(
+        false,
+      )
     })
 
     it("fails bad parsed value", () => {
@@ -228,7 +234,10 @@ describe("index", () => {
 
     it("tolerates excess properties", () => {
       expect(
-        f("Foo")((x): x is null => x === null)({ ...T.mk.Foo, excess: true }),
+        f("Foo")((x): x is null => x === null)({
+          ...T.mk.Foo(null),
+          excess: true,
+        }),
       ).toBe(true)
     })
   })

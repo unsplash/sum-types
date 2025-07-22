@@ -68,8 +68,6 @@ type ValueByTag<A extends AnyMember, K extends Tag<A>> = Value<
 >
 
 /**
- * A constructor is either `A -> B` or, if it's nullary, directly `B`.
- *
  * Indexes a sum union by the member tag to determine the constructor shape.
  * The third type argument can be inferred via its default.
  *
@@ -81,7 +79,7 @@ export type Constructor<
   K extends Tag<A>,
   V = ValueByTag<A, K>,
   // eslint-disable-next-line functional/prefer-readonly-type
-> = [V] extends [null] ? A : (x: V) => A
+> = (x: V) => A
 
 /**
  * Build a constructor for a member. If the member is nullary it won't be a
@@ -91,21 +89,12 @@ export type Constructor<
  */
 export const mkConstructor =
   <A extends AnyMember = never>() => // eslint-disable-line functional/functional-parameters
-  <T extends Tag<A>>(k: T): Constructor<A, T> => {
-    const nonNullary = (v => ({
+  <T extends Tag<A>>(k: T): Constructor<A, T> =>
+  v =>
+    ({
       [tagKey]: k,
       [valueKey]: v,
-    })) as Exclude<Constructor<A, T>, A>
-
-    const nullary = nonNullary(null) as unknown as A
-
-    // We don't know at runtime if the member is nullary or not, so we'll
-    // return an object which can act as both. Types will guarantee visibility
-    // and access only upon the appropriate one of the two possibilities.
-    //
-    // NB the function needs to come first.
-    return Object.assign(nonNullary, nullary) // eslint-disable-line functional/immutable-data
-  }
+    } as unknown as A)
 
 type Constructors<A extends AnyMember> = {
   readonly // eslint-disable-next-line functional/prefer-readonly-type
@@ -132,7 +121,6 @@ const mkConstructors = <A extends AnyMember>(): Constructors<A> => {
     },
   })
 }
-
 /**
  * Symbol for declaring a wildcard case in a {@link match} expression.
  *
@@ -153,8 +141,8 @@ const mkConstructors = <A extends AnyMember>(): Constructors<A> => {
  *   [_]: () => "no sun",
  * })
  *
- * assert.strictEqual(getSun(Weather.mk.Sun), "sun")
- * assert.strictEqual(getSun(Weather.mk.Clouds), "no sun")
+ * assert.strictEqual(getSun(Weather.mk.Sun(null)), "sun")
+ * assert.strictEqual(getSun(Weather.mk.Clouds(null)), "no sun")
  *
  * @since 0.1.0
  */
@@ -411,7 +399,7 @@ export const deserialize =
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore This is unit tested.
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return v === null ? x.mk[k] : x.mk[k](v)
+    return x.mk[k](v)
   }
 
 /**

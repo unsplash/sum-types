@@ -1,7 +1,7 @@
 {
   "name": "@unsplash/sum-types",
   "description": "Safe, ergonomic, non-generic sum types in TypeScript.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "author": "Unsplash",
   "repository": {

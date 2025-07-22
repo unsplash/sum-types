@@ -2,6 +2,10 @@
 
 This project adheres to semantic versioning.
 
+## 1.0.1 (2025-07-22)
+
+Fix JSON compatibility of nullary sums.
+
 ## 1.0.0 (2025-07-22)
 
 Makes the structure of sums JSON-serialisable for improved ecosystem compatibility.
