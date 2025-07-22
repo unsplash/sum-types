@@ -2,6 +2,10 @@
 
 This project adheres to semantic versioning.
 
+## 1.0.0 (2025-07-22)
+
+Makes the structure of sums JSON-serialisable for improved ecosystem compatibility.
+
 ## 0.4.1 (2023-10-04)
 
 Fixes pattern matching branches which return `undefined` in `matchX` and `matchXW`.

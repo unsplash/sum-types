@@ -4,6 +4,9 @@ Safe, ergonomic, non-generic sum types in TypeScript.
 
 Documentation: [unsplash.github.io/sum-types](https://unsplash.github.io/sum-types/)
 
+> [!NOTE]
+> @unsplash/sum-types is no longer actively maintained as we've migrated to the [Effect](https://effect.website) ecosystem.
+
 ```ts
 import * as Sum from "@unsplash/sum-types"
 
