@@ -22,21 +22,18 @@
  * @since 0.1.0
  */
 
-// Our internal structure is keyed with symbols to try and prevent anyone tying
-// their code to it, with the intention being that they instead make use of
-// (de)serialization.
 /**
- * Symbol used to index a sum type and access its tag. Not exposed with the
+ * Key used to index a sum type and access its tag. Not exposed with the
  * intention that consumers make use of (de)serialization.
  */
-const tagKey = Symbol("@unsplash/sum-types internal tag key")
+const tagKey = "_tag"
 type TagKey = typeof tagKey
 
 /**
- * Symbol used to index a sum type and access its tag. Not exposed with the
+ * Key used to index a sum type and access its tag. Not exposed with the
  * intention that consumers make use of (de)serialization.
  */
-const valueKey = Symbol("@unsplash/sum-types internal value key")
+const valueKey = "_value"
 type ValueKey = typeof valueKey
 
 /**
