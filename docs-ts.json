@@ -1,5 +1,9 @@
 {
   "enforceDescriptions": true,
   "enforceExamples": false,
-  "enforceVersion": false
+  "enforceVersion": false,
+  "examplesCompilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node"
+  }
 }

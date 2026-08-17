@@ -1,10 +1,15 @@
 module.exports = {
-  preset: "ts-jest",
   testEnvironment: "node",
   testRegex: "/test/unit/",
-  globals: {
-    "ts-jest": {
-      diagnostics: false,
-    },
+  transform: {
+    "^.+\\.tsx?$": [
+      "ts-jest",
+      {
+        diagnostics: false,
+        tsconfig: {
+          module: "commonjs",
+        },
+      },
+    ],
   },
 }

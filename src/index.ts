@@ -73,12 +73,10 @@ type ValueByTag<A extends AnyMember, K extends Tag<A>> = Value<
  *
  * @internal
  */
-// eslint-disable-next-line functional/prefer-readonly-type
 export type Constructor<
   A extends AnyMember,
   K extends Tag<A>,
   V = ValueByTag<A, K>,
-  // eslint-disable-next-line functional/prefer-readonly-type
 > = (x: V) => A
 
 /**
@@ -88,7 +86,7 @@ export type Constructor<
  * @internal
  */
 export const mkConstructor =
-  <A extends AnyMember = never>() => // eslint-disable-line functional/functional-parameters
+  <A extends AnyMember = never>() =>
   <T extends Tag<A>>(k: T): Constructor<A, T> =>
   v =>
     ({
@@ -97,11 +95,9 @@ export const mkConstructor =
     } as unknown as A)
 
 type Constructors<A extends AnyMember> = {
-  readonly // eslint-disable-next-line functional/prefer-readonly-type
-  [V in A as Tag<V>]: Constructor<A, Tag<V>>
+  readonly [V in A as Tag<V>]: Constructor<A, Tag<V>>
 }
 
-// eslint-disable-next-line functional/functional-parameters
 const mkConstructors = <A extends AnyMember>(): Constructors<A> => {
   // Reuse constructors to preserve referential equality. This improves interop
   // with the likes of Jest.
@@ -110,11 +106,11 @@ const mkConstructors = <A extends AnyMember>(): Constructors<A> => {
   return new Proxy({} as Constructors<A>, {
     get: (__: Constructors<A>, tag: Tag<A>) => {
       const f = xs.get(tag)
-      // eslint-disable-next-line functional/no-conditional-statement
+      // eslint-disable-next-line functional/no-conditional-statements
       if (f !== undefined) return f
 
       const g = mkConstructor<A>()(tag)
-      // eslint-disable-next-line functional/no-expression-statement
+      // eslint-disable-next-line functional/no-expression-statements, functional/immutable-data
       xs.set(tag, g)
 
       return g
@@ -218,48 +214,48 @@ export type Match<A extends AnyMember> = <B>(fs: Cases<A, B>) => (x: A) => B
 export type MatchX<A extends AnyMember> = <B>(fs: CasesX<A, B>) => (x: A) => B
 
 const mkMatchW =
-  <A extends AnyMember>(): MatchW<A> => // eslint-disable-line functional/functional-parameters
+  <A extends AnyMember>(): MatchW<A> =>
   <B extends Cases<A, unknown>>(fs: B) =>
   <C extends ReturnTypes<B>>(x: A): C => {
     const tag = x[tagKey] as Tag<A>
 
-    const g = fs[tag]
-    // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-return
-    if (g !== undefined) return g(x[valueKey]) as C
+    const g = fs[tag] as unknown as ((value: Value<A>) => C) | undefined
+    // eslint-disable-next-line functional/no-conditional-statements
+    if (g !== undefined) return g(x[valueKey])
 
     const h = (fs as CasesWildcard<A, B>)[_]
-    // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-return
-    if (h !== undefined) return h() as C
+    // eslint-disable-next-line functional/no-conditional-statements
+    if (h !== undefined) return h() as unknown as C
 
-    // eslint-disable-next-line functional/no-throw-statement
+    // eslint-disable-next-line functional/no-throw-statements
     throw new Error(`Failed to pattern match against tag "${tag}".`)
   }
 
 const mkMatchXW =
-  <A extends AnyMember>(): MatchXW<A> => // eslint-disable-line functional/functional-parameters
+  <A extends AnyMember>(): MatchXW<A> =>
   <B extends CasesX<A, unknown>>(fs: B) =>
   <C extends B[keyof B]>(x: A): C => {
     const tag = x[tagKey] as Tag<A>
 
-    // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-return
+    // eslint-disable-next-line functional/no-conditional-statements
     if (Object.prototype.hasOwnProperty.call(fs, tag)) return fs[tag] as C
 
-    // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-return
+    // eslint-disable-next-line functional/no-conditional-statements
     if (Object.prototype.hasOwnProperty.call(fs, _))
-      return (fs as CasesXWildcard<A, B>)[_] as C
+      return (fs as CasesXWildcard<A, B>)[_] as unknown as C
 
-    // eslint-disable-next-line functional/no-throw-statement
+    // eslint-disable-next-line functional/no-throw-statements
     throw new Error(`Failed to pattern match against tag "${tag}".`)
   }
 
 const mkMatch =
-  <A extends AnyMember>(): Match<A> => // eslint-disable-line functional/functional-parameters
+  <A extends AnyMember>(): Match<A> =>
   <B>(fs: Cases<A, B>) =>
   (x: A): B =>
     mkMatchW<A>()(fs)(x) as B
 
 const mkMatchX =
-  <A extends AnyMember>(): MatchX<A> => // eslint-disable-line functional/functional-parameters
+  <A extends AnyMember>(): MatchX<A> =>
   <B>(fs: CasesX<A, B>) =>
   (x: A): B =>
     mkMatchXW<A>()(fs)(x) as B
@@ -269,6 +265,7 @@ const mkMatchX =
  *
  * @internal
  */
+// eslint-disable-next-line functional/no-mixed-types
 export interface Sum<A extends AnyMember> {
   /**
    * An object of constructors for the sum type's members.
@@ -352,7 +349,6 @@ export interface Sum<A extends AnyMember> {
  *
  * @since 0.1.0
  */
-// eslint-disable-next-line functional/functional-parameters
 export const create = <A extends AnyMember>(): Sum<A> => ({
   mk: mkConstructors<A>(),
   match: mkMatch<A>(),
@@ -368,6 +364,7 @@ export const create = <A extends AnyMember>(): Sum<A> => ({
  * @since 0.1.1
  */
 // The conditional type distributes over the union members.
+// eslint-disable-next-line functional/type-declaration-immutability
 export type Serialized<A> = A extends AnyMember
   ? readonly [Tag<A>, Value<A>]
   : never
@@ -430,20 +427,20 @@ export const deserialize =
 //      being provided a default type (`=`). However, it would have to have a
 //      default type in order to follow `A`, which would itself have one.
 export const is =
-  <A extends AnyMember>() => // eslint-disable-line functional/functional-parameters
+  <A extends AnyMember>() =>
   <B extends Tag<A>>(k: B) =>
   (f: (mv: unknown) => mv is ValueByTag<A, B>) =>
   (x: unknown): x is A => {
-    // eslint-disable-next-line functional/no-conditional-statement
+    // eslint-disable-next-line functional/no-conditional-statements
     if (x === null || !["object", "function"].includes(typeof x)) return false
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const xx: any = x
 
-    // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line functional/no-conditional-statements, @typescript-eslint/no-unsafe-member-access
     if (!(tagKey in xx) || xx[tagKey] !== k) return false
 
-    // eslint-disable-next-line functional/no-conditional-statement, @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line functional/no-conditional-statements, @typescript-eslint/no-unsafe-member-access
     if (!(valueKey in xx) || !f(xx[valueKey])) return false
 
     return true

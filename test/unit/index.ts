@@ -1,5 +1,3 @@
-/* eslint-disable functional/functional-parameters */
-
 import { create, _, is, serialize, deserialize, Member } from "../../src/index"
 import fc from "fast-check"
 
