@@ -49,10 +49,5 @@
     "prettier": "^2.8.8",
     "ts-jest": "^29.4.12",
     "typescript": "^5.9.3"
-  },
-  "resolutions": {
-    "@babel/traverse": "7.29.8",
-    "form-data": "3.0.5",
-    "minimist": "1.2.8"
   }
 }
