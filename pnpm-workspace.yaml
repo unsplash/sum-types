@@ -2,4 +2,5 @@ allowBuilds:
   unrs-resolver: true
 minimumReleaseAge: 1440
 trustPolicy: no-downgrade
+trustPolicyIgnoreAfter: 1440
 blockExoticSubdeps: true
