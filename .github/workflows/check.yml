@@ -5,15 +5,18 @@ on:
     branches:
       - master
 
+permissions:
+  contents: read
+
 jobs:
   typecheck:
     name: Typecheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: 16.x
+          node-version: 24.x
           cache: yarn
       - run: yarn install --frozen-lockfile
       - run: yarn typecheck
@@ -22,10 +25,10 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: 16.x
+          node-version: 24.x
           cache: yarn
       - run: yarn install --frozen-lockfile
       - run: yarn lint
@@ -34,10 +37,10 @@ jobs:
     name: Formatting
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: 16.x
+          node-version: 24.x
           cache: yarn
       - run: yarn install --frozen-lockfile
       - run: yarn fmt --check
@@ -46,10 +49,10 @@ jobs:
     name: Unit test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: 16.x
+          node-version: 24.x
           cache: yarn
       - run: yarn install --frozen-lockfile
       - run: yarn unit
@@ -58,10 +61,10 @@ jobs:
     name: Docs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: 16.x
+          node-version: 24.x
           cache: yarn
       - run: yarn install --frozen-lockfile
       - run: yarn docs
