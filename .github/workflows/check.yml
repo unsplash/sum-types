@@ -14,57 +14,72 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.21.0
       - uses: actions/setup-node@v6
         with:
           node-version: 24.x
-          cache: yarn
-      - run: yarn install --frozen-lockfile
-      - run: yarn typecheck
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run typecheck
 
   lint:
     name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.21.0
       - uses: actions/setup-node@v6
         with:
           node-version: 24.x
-          cache: yarn
-      - run: yarn install --frozen-lockfile
-      - run: yarn lint
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run lint
 
   fmt:
     name: Formatting
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.21.0
       - uses: actions/setup-node@v6
         with:
           node-version: 24.x
-          cache: yarn
-      - run: yarn install --frozen-lockfile
-      - run: yarn fmt --check
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run fmt --check
 
   unit:
     name: Unit test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.21.0
       - uses: actions/setup-node@v6
         with:
           node-version: 24.x
-          cache: yarn
-      - run: yarn install --frozen-lockfile
-      - run: yarn unit
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run unit
 
   docs:
     name: Docs
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.21.0
       - uses: actions/setup-node@v6
         with:
           node-version: 24.x
-          cache: yarn
-      - run: yarn install --frozen-lockfile
-      - run: yarn docs
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run docs
